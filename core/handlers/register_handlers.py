@@ -4,6 +4,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from core.utils.statesform import StepForm
+from requests_sql import add_user
 
 reg_router = Router()
 
@@ -22,30 +23,34 @@ async def get_register(message: Message, state: FSMContext):
 
 @reg_router.message(StepForm.GET_NAME)
 async def get_name(message: Message, state: FSMContext):
-    await message.answer(f'Ваше имя:\r\n{message.text}\r\nТеперь '
-                         f'введите фамилию')
+    await message.answer('Введите отчество')
     await state.update_data(name=message.text)
+    await state.set_state(StepForm.GET_MID_NAME)
+
+
+@reg_router.message(StepForm.GET_MID_NAME)
+async def get_name(message: Message, state: FSMContext):
+    await message.answer('Введите фамилию')
+    await state.update_data(mid_name=message.text)
     await state.set_state(StepForm.GET_LAST_NAME)
 
 
 @reg_router.message(StepForm.GET_LAST_NAME)
 async def get_last_name(message: Message, state: FSMContext):
-    await message.answer(f'Твоя фамилия:\r\n{message.text}\r\nтеперь '
-                         f'введи возраст')
     await state.update_data(last_name=message.text)
-    await state.set_state(StepForm.GET_AGE)
 
-
-@reg_router.message(StepForm.GET_AGE)
-async def get_age(message: Message, state: FSMContext):
-    await state.update_data(age=message.text)
     context_data = await state.get_data()
 
     name = context_data.get('name')
+    mid_name = context_data.get('mid_name')
     last_name = context_data.get('last_name')
-    age = context_data.get('age')
+    full_name_tg = message.from_user.full_name
 
-    await message.answer(f'{name} {last_name}, '
-                         f'твой возраст: {age}.')
+    add_user(name, mid_name, last_name, message.from_user.id,
+             full_name_telegram=full_name_tg)
+
+    await message.answer(f'Вы успешно зарегистрировались, как '
+                         f'{name} {mid_name} {last_name}')
 
     await state.clear()
+

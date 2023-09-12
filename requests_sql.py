@@ -71,16 +71,17 @@ def create_table_users():
 def add_user(first_name,
              middle_name,
              last_name,
-             birthday,
-             gender,
-             location,
-             school,
-             studies,
-             role,
-             status,
-             id_kinsman,
-             full_name_telegram,
-             chat_id
+             chat_id,
+             birthday=None,
+             gender=None,
+             location=None,
+             school=None,
+             studies=False,
+             role='student',
+             status=None,
+             id_kinsman=None,
+             full_name_telegram=None,
+             party=None,
              ):
 
     connection = False
@@ -93,7 +94,7 @@ def add_user(first_name,
             # Значения для вставки:
             values = (first_name, middle_name, last_name, birthday,
                       gender, location, school, studies, role, status,
-                      id_kinsman,  full_name_telegram, chat_id)
+                      id_kinsman,  full_name_telegram, party, chat_id)
 
             # Выполнение запроса
             cursor.execute(query, values)
@@ -129,3 +130,6 @@ def add_user(first_name,
 #     if connection:
 #         connection.close()
 #         print('[INFO] PostgreSQL connection closed')
+
+
+
