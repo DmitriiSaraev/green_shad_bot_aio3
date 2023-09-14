@@ -5,7 +5,8 @@ from aiogram.fsm.context import FSMContext
 
 from core.settings import settings
 from core.utils.commands import set_commands
-from core.utils.statesform import StepForm
+from core.settings import settings
+from core.keyboards.inline import get_inline_keyboard_for_admin
 
 
 dp = Dispatcher()
@@ -26,8 +27,22 @@ async def stop_bot(bot: Bot):
 
 @dp.message(CommandStart())
 async def get_start(message: Message, bot: Bot):
-    await message.answer(f'Привет {message.from_user.first_name},'
+    if message.from_user.id == settings.bots.admin_id:
+        await message.answer('Йоу, вот что ты можешь выбрать',
+                             reply_markup=get_inline_keyboard_for_admin())
+    else:
+        await message.answer(f'Привет {message.from_user.first_name},'
                          f' рад тебя видеть!')
+
+
+
+
+
+
+
+
+
+
 
 
 

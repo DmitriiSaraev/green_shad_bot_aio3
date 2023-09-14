@@ -4,7 +4,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from core.utils.statesform import StepForm
-from requests_sql import add_user
+from core.sql.worker_sql import add_user
 
 reg_router = Router()
 

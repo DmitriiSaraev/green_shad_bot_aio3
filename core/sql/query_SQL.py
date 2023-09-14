@@ -26,3 +26,32 @@ create_user = """
                 ) 
                 VALUES (%s, %s, %s, %s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s)
                 """
+
+
+craate_table_schedule = """CREATE TABLE IF NOT EXISTS schedule(
+    id serial PRIMARY KEY,
+    date DATE,
+    start_lesson TIME,
+    and_lesson TIME,
+    student INT REFERENCES users (id),
+    party INT REFERENCES party (id)
+);
+"""
+
+
+add_lesson = """
+    INSERT INTO schedule(
+    date, start_lesson, and_lesson  
+    )
+    VALUES (%s, %s, %s)
+    """
+
+
+
+craate_table_party = """CREATE TABLE IF NOT EXISTS party(
+    id serial PRIMARY KEY,
+    create_date DATE,
+    update_date DATE,
+    name VARCHAR(50)
+);
+"""

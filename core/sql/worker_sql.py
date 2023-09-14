@@ -1,7 +1,6 @@
 import psycopg2
-from config_for_postgres import host, user, password, db_name
-
-import query_SQL
+from core.sql.config_for_postgres import host, user, password, db_name
+from core.sql import query_SQL
 
 
 def connect():
@@ -107,6 +106,32 @@ def add_user(first_name,
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+def add_lesson(date, start_lesson, and_lesson):
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_lesson
+            # Значения для вставки:
+            values = (date, start_lesson, and_lesson)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was succefully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+
 
 # with connection.cursor() as cursor:
 #     cursor.execute(

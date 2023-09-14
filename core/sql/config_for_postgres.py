@@ -5,4 +5,4 @@ db_name = "postgres"
 port = 5432
 
 token_bot = '6414654096:AAEgFmF9eihzqvOJp4WaAmfqrUdRMfiKMnI'
-Your_user_ID: 418121943
+Your_user_ID = 418121943
