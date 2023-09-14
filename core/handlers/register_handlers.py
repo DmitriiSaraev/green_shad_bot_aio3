@@ -46,6 +46,7 @@ async def get_last_name(message: Message, state: FSMContext):
     last_name = context_data.get('last_name')
     full_name_tg = message.from_user.full_name
 
+    # Записать пользователя в базу данных
     add_user(name, mid_name, last_name, message.from_user.id,
              full_name_telegram=full_name_tg)
 
