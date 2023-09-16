@@ -55,3 +55,12 @@ craate_table_party = """CREATE TABLE IF NOT EXISTS party(
     name VARCHAR(50)
 );
 """
+
+
+# Получить все уроки которые еще будут, прошедшие не выдает
+get_all_future_lessons = """SELECT * FROM schedule
+WHERE date > CURRENT_DATE OR 
+(date = CURRENT_DATE AND start_lesson > CURRENT_TIME)
+ORDER BY date, start_lesson
+"""
+

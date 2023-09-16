@@ -12,6 +12,9 @@ class StateSchedule(StatesGroup):
     INPUT_DATE = State()
     INPUT_START_LESSON = State()
     INPUT_AND_LESSON = State()
+    INPUT_LESSON_DURATION = State()
+
+
 
 
 

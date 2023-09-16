@@ -1,6 +1,7 @@
 import psycopg2
 from core.sql.config_for_postgres import host, user, password, db_name
 from core.sql import query_SQL
+from core.utils.parser import get_dict_lesson
 
 
 def connect():
@@ -14,6 +15,7 @@ def connect():
     return connection
 
 
+### Блок работы с пользователем ###
 def create_table_users():
     connection = False
 
@@ -29,42 +31,6 @@ def create_table_users():
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
-
-
-# try:
-#     connection = psycopg2.connect(
-#         host=host,
-#         user=user,
-#         password=password,
-#         database=db_name
-#     )
-#     connection.autocommit = True
-
-    # Версия сервера
-    # with connection.cursor() as cursor:
-    #     cursor.execute(
-    #         "SELECT version();"
-    #     )
-    #
-    #     print(f'Server version: {cursor.fetchone()}')
-
-    # Создать таблицу в базе данных
-    # with connection.cursor() as cursor:
-    #     cursor.execute(
-    #         """CREATE TABLE users(
-    #             id serial PRIMARY KEY,
-    #             first_name VARCHAR(50) NOT NULL,
-    #             middle_name VARCHAR(50) NOT NULL,
-    #             last_name VARCHAR(50) NOT NULL,
-    #             birthday DATE,
-    #             registration_date DATE DEFAULT CURRENT_DATE,
-    #             full_name_telegram VARCHAR(255),
-    #             chat_id INTEGER
-    #             );"""
-    #     )
-    #
-    #     # connection.commit()
-    #     print('[INFO] Table created successfully')
 
 
 def add_user(first_name,
@@ -108,6 +74,9 @@ def add_user(first_name,
             print('[INFO] PostgreSQL connection closed')
 
 
+
+### Блок работы с расписанием ###
+
 def add_lesson(date, start_lesson, and_lesson):
     connection = False
 
@@ -129,6 +98,34 @@ def add_lesson(date, start_lesson, and_lesson):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+# Получить все уроки которые еще будут, прошедшие не выдает
+def get_all_future_lessons():
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_all_future_lessons
+            # Выполнение запроса
+            cursor.execute(query)
+            dict_schedule = get_dict_lesson(cursor)
+            print('[INFO] Data was succefully received')
+
+            return dict_schedule
+
+
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
 
 
 
@@ -155,6 +152,41 @@ def add_lesson(date, start_lesson, and_lesson):
 #     if connection:
 #         connection.close()
 #         print('[INFO] PostgreSQL connection closed')
+
+# try:
+#     connection = psycopg2.connect(
+#         host=host,
+#         user=user,
+#         password=password,
+#         database=db_name
+#     )
+#     connection.autocommit = True
+
+    # Версия сервера
+    # with connection.cursor() as cursor:
+    #     cursor.execute(
+    #         "SELECT version();"
+    #     )
+    #
+    #     print(f'Server version: {cursor.fetchone()}')
+
+    # Создать таблицу в базе данных
+    # with connection.cursor() as cursor:
+    #     cursor.execute(
+    #         """CREATE TABLE users(
+    #             id serial PRIMARY KEY,
+    #             first_name VARCHAR(50) NOT NULL,
+    #             middle_name VARCHAR(50) NOT NULL,
+    #             last_name VARCHAR(50) NOT NULL,
+    #             birthday DATE,
+    #             registration_date DATE DEFAULT CURRENT_DATE,
+    #             full_name_telegram VARCHAR(255),
+    #             chat_id INTEGER
+    #             );"""
+    #     )
+    #
+    #     # connection.commit()
+    #     print('[INFO] Table created successfully')
 
 
 
