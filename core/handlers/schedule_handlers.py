@@ -32,13 +32,13 @@ async def cmd_schedule(message: types.Message):
 
 @schedule_router.callback_query(F.data == 'make_a_schedule')
 async def send_schedule(callback: types.CallbackQuery):
-    await callback.message.answer(str('Лови расписание, йо мазафака'))
+    await callback.message.answer(str('Лови расписание'))
     await callback.answer()
 
 
 # Выбираем просмотр расписания, либо создание урока
 @schedule_router.callback_query(F.data == 'get_buttons_for_work_schedule')
-async def send_schedule(callback: types.CallbackQuery):
+async def action_selection_schedule(callback: types.CallbackQuery):
     await callback.message.answer(text='Что будешь делать?',
                          reply_markup=get_inline_keyboard_for_schedule())
     await callback.answer()
@@ -46,28 +46,31 @@ async def send_schedule(callback: types.CallbackQuery):
 
 ### Блок создания урока ###
 @schedule_router.callback_query(F.data == 'add_lesson')
-async def send_schedule(callback: types.CallbackQuery, state: FSMContext):
+async def get_date_for_new_lesson(callback: types.CallbackQuery,
+                                  state: FSMContext):
     await callback.message.answer(text='Введи дату урока в формате дд.мм.гг')
     await state.set_state(StateSchedule.INPUT_DATE)
     await callback.answer()
 
 
 @schedule_router.message(StateSchedule.INPUT_DATE)
-async def get_name(message: types.Message, state: FSMContext):
+async def get_time_start_for_new_lesson(message: types.Message,
+                                        state: FSMContext):
     await state.update_data(date=message.text)
     await message.answer('Введи время начала урока в формате чч.мм')
     await state.set_state(StateSchedule.INPUT_START_LESSON)
 
 
 @schedule_router.message(StateSchedule.INPUT_START_LESSON)
-async def get_name(message: types.Message, state: FSMContext):
+async def get_duration_for_new_lesson(message: types.Message,
+                                      state: FSMContext):
     await state.update_data(start_time=message.text)
     await message.answer('Введи продолжительность урока в формате мм')
     await state.set_state(StateSchedule.INPUT_LESSON_DURATION)
 
 
 @schedule_router.message(StateSchedule.INPUT_LESSON_DURATION)
-async def get_name(message: types.Message, state: FSMContext):
+async def create_new_lesson(message: types.Message, state: FSMContext):
     await state.update_data(and_time=message.text)
 
     context_data = await state.get_data()
@@ -105,8 +108,19 @@ async def get_schedule(callback: types.CallbackQuery):
 @schedule_router.callback_query(OpenLessonCallback.filter())
 async def callbacks_lesson_fub(callback: types.CallbackQuery,
                                callback_data: OpenLessonCallback):
-    print(callback_data.id_lesson)
+    # keyboard = get_keyboard_id_lesson(callback_data)
+
+
+
+
+    # print(callback_data.id_lesson)
+
     await callback.answer()
+
+
+
+
+
 
 
 

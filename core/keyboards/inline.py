@@ -40,7 +40,14 @@ def get_keyboard_lessons(lessons):
                             f"{pars_time(lesson['start_lesson'])}\r\n"
                             f"Конец урока: {pars_time(lesson['and_lesson'])}",
                        callback_data=
-                       OpenLessonCallback(id_lesson=lesson['id_lesson']))
+                       OpenLessonCallback(id_lesson=lesson['id_lesson'],
+                                          date=lesson['date'],
+                                          start_lesson=lesson['start_lesson'],
+                                          and_lesson=lesson['and_lesson'],
+                                          student=lesson['student'],
+                                          party=lesson['party']
+                                          )
+                       )
 
     builder.adjust(1, 1)
 

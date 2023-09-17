@@ -16,19 +16,19 @@ dp = Dispatcher()
 async def start_bot(bot: Bot):
     await set_commands(bot)
     await bot.send_message(settings.bots.admin_id,
-                           text='Йоу, Димас, бот запущен!')
+                           text='Бот запущен!')
 
 
 @dp.shutdown()
 async def stop_bot(bot: Bot):
     await bot.send_message(settings.bots.admin_id,
-                           text='Йоу, Димас, бот остановлен!')
+                           text='Бот остановлен!')
 
 
 @dp.message(CommandStart())
 async def get_start(message: Message, bot: Bot):
     if message.from_user.id == settings.bots.admin_id:
-        await message.answer('Йоу, вот что ты можешь выбрать',
+        await message.answer('Вот что ты можешь выбрать',
                              reply_markup=get_inline_keyboard_for_admin())
     else:
         await message.answer(f'Привет {message.from_user.first_name},'
