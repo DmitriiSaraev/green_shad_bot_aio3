@@ -64,3 +64,10 @@ WHERE date > CURRENT_DATE OR
 ORDER BY date, start_lesson
 """
 
+
+get_lesson = """
+    SELECT *
+    FROM schedule
+    WHERE id = %s
+"""
+

@@ -63,7 +63,7 @@ def pars_time(date):
     # Возвращает время
     hour = get_two_digits(date.hour)
     minute = get_two_digits(date.minute)
-    time = f'{hour}:{minute}'
+    time = f'{hour}.{minute}'
 
     return time
 

@@ -40,21 +40,33 @@ def get_keyboard_lessons(lessons):
                             f"{pars_time(lesson['start_lesson'])}\r\n"
                             f"Конец урока: {pars_time(lesson['and_lesson'])}",
                        callback_data=
-                       OpenLessonCallback(id_lesson=lesson['id_lesson'],
-                                          date=lesson['date'],
-                                          start_lesson=lesson['start_lesson'],
-                                          and_lesson=lesson['and_lesson'],
-                                          student=lesson['student'],
-                                          party=lesson['party']
-                                          )
-                       )
-
-    builder.adjust(1, 1)
+                       OpenLessonCallback(id_lesson=lesson['id_lesson']))
 
     # Для вывовода по одной кномпке в ряду
-    # print(*[item + ', ' for item in pokemon_list])
-    # Результат:
-    # Pikachu,  Abra,  Charmander,
+    builder.adjust(*[1 for item in lessons])
+
+    return builder.as_markup()
+
+
+def get_keyboard_id_lesson(id_lesson):
+    builder = InlineKeyboardBuilder()
+
+    builder.button(text='Дата, время урока',
+                   callback_data='_')
+    builder.button(text='Ученики',
+                   callback_data='open_students')
+    builder.button(text='Группа',
+                   callback_data='_')
+    builder.button(text='Изменить время',
+                   callback_data='edit_date')
+    builder.button(text='Изменить состав',
+                   callback_data='edit_student')
+    builder.button(text='Отправить соообщение ученикам',
+                   callback_data='send_message_lesson_student')
+    builder.button(text='Отменить урок',
+                   callback_data='cansel_lesson')
+
+    builder.adjust(1, 1, 1, 1, 1, 1, 1)
 
     return builder.as_markup()
 
