@@ -118,11 +118,10 @@ async def callbacks_lesson_fub(callback: types.CallbackQuery,
     lesson = get_lesson(callback_data.id_lesson)
 
     keyboard = get_keyboard_id_lesson(lesson)
-    await callback.message.answer(text='Урок',
+    await callback.message.answer(text=f'Урок дата {pars_date(lesson["date"])}\r\n'
+                                       f'Время {pars_time(lesson["start_lesson"])} - '
+                                       f'{pars_time(lesson["end_lesson"])}',
                                   reply_markup=keyboard)
-
-
-
 
     await callback.answer()
 

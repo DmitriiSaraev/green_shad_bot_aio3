@@ -71,3 +71,13 @@ get_lesson = """
     WHERE id = %s
 """
 
+craate_table_lessons_history = """CREATE TABLE IF NOT EXISTS lessons_hostory(
+    id serial PRIMARY KEY,
+    id_lesson int,
+    student INT REFERENCES users (id),
+    party INT REFERENCES party (id),
+    visit BOOl,
+    payment BOOl,
+    comment VARCHAR(255)
+);
+"""
