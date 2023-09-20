@@ -116,7 +116,6 @@ async def get_schedule(callback: types.CallbackQuery):
 async def callbacks_lesson_fub(callback: types.CallbackQuery,
                                callback_data: OpenLessonCallback):
     lesson = get_lesson(callback_data.id_lesson)
-    print(lesson)
 
     keyboard = get_keyboard_id_lesson(lesson)
     await callback.message.answer(text='Урок',

@@ -48,11 +48,9 @@ def get_keyboard_lessons(lessons):
     return builder.as_markup()
 
 
-def get_keyboard_id_lesson(id_lesson):
+def get_keyboard_id_lesson(lesson):
     builder = InlineKeyboardBuilder()
 
-    builder.button(text='Дата, время урока',
-                   callback_data='_')
     builder.button(text='Ученики',
                    callback_data='open_students')
     builder.button(text='Группа',
