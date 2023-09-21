@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core.utils.parser import pars_date, pars_time
-from core.utils.callback_data import OpenLessonCallback
+from core.utils.callback_data import OpenLessonCallback, GetStudentForLesson
 
 
 def get_inline_keyboard_for_admin():
@@ -52,7 +52,7 @@ def get_keyboard_id_lesson(lesson):
     builder = InlineKeyboardBuilder()
 
     builder.button(text='Ученики',
-                   callback_data='open_students')
+                   callback_data=GetStudentForLesson(id_lesson=lesson['id_lesson']))
     builder.button(text='Группа',
                    callback_data='_')
     builder.button(text='Изменить время',
@@ -68,6 +68,16 @@ def get_keyboard_id_lesson(lesson):
 
     return builder.as_markup()
 
+
+def get_inline_keyboard_add_student_to_lesson():
+    # для записи ученика на урок
+    builder = InlineKeyboardBuilder()
+    builder.button(text='Записать группу',
+                   callback_data='add_group_to_lesson')
+    builder.button(text='Записать ученика',
+                   callback_data='add_student_to_lesson')
+
+    return builder.as_markup()
 
 
 

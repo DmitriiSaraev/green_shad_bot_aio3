@@ -8,14 +8,15 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    get_keyboard_lessons,
                                    get_keyboard_id_lesson)
-from core.utils.callback_data import OpenLessonCallback
+from core.utils.callback_data import OpenLessonCallback, GetStudentForLesson
 from core.utils.statesform import StateSchedule
 from core.utils.parser import (main_date_parser,
                                pars_date,
                                pars_time)
 from core.sql.worker_sql import (add_lesson,
                                  get_all_future_lessons,
-                                 get_lesson)
+                                 get_lesson,
+                                 get_students_id_from_lesson)
 
 
 
@@ -126,9 +127,30 @@ async def callbacks_lesson_fub(callback: types.CallbackQuery,
     await callback.answer()
 
 
+@schedule_router.callback_query(GetStudentForLesson.filter())
+async def open_students(callback: types.CallbackQuery,
+                        callback_data: GetStudentForLesson):
+
+    # выводит список студентов которые записаны на выбранный урок
+
+    lesson_id = callback_data.id_lesson
+    students_id = get_students_id_from_lesson(lesson_id)
+
+    await callback.answer()
 
 
+@schedule_router.callback_query(F.data == 'add_group_to_lesson')
+async def add_group_to_lesson(callback: types.CallbackQuery):
+    lessons = get_all_future_lessons()
+    keyboard = get_keyboard_lessons(lessons)
 
+    if len(lessons) == 0:
+        await callback.message.answer(text='Уроков нет.',
+                                      reply_markup=keyboard)
+    else:
+        await callback.message.answer(text='Вот оно - расписание твоей мечты:',
+                                      reply_markup=keyboard)
+    await callback.answer()
 
 
 

@@ -72,6 +72,9 @@ def pars_time(date):
 
 ### Блок вывода расписания пользователю ###
 def get_dict_lesson(cursor):
+    # Принимает объект курсора со всеми столбцами из таблицы schedule
+    # Получить данные по уроку из курсора, в курсоре может быть как один, таки больше одного урока,
+    # возвращает список со словарем данных об уроке, либо словари с данными об уроках, если их несколько.
     list_dicts_lesson = []
 
     for lesson in cursor:
@@ -95,6 +98,30 @@ def get_dict_lesson(cursor):
 
     return list_dicts_lesson
 
+
+def get_student_id_from_cursor(cursor):
+    # Принимает объект курсора со столбцами student, visit, payment, comment из таблицы lessons_history
+    # Возвращает словарь этих столбцов
+    list_student_id_from_lesson = []
+
+    # student, visit, payment, comment
+
+    for lesson in cursor:
+        student_id = lesson[0]
+        visit = lesson[1]
+        payment = lesson[2]
+        comment = lesson[3]
+
+        dict_student_id = {
+            'student_id': student_id,
+            'visit': visit,
+            'payment': payment,
+            'comment': comment
+        }
+
+        list_student_id_from_lesson.append(dict_student_id)
+
+    return list_student_id_from_lesson
 
 # (12, datetime.date(2023, 9, 16), datetime.time(18, 0), datetime.time(18, 45), None, None)
 # (13, datetime.date(2023, 9, 16), datetime.time(21, 0), datetime.time(21, 45), None, None)

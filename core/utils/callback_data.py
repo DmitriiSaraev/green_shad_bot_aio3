@@ -10,3 +10,10 @@ class OpenLessonCallback(CallbackData, prefix='fabnum'):
     # and_lesson: time
     # student: Optional[int] = None
     # party: Optional[int] = None
+
+
+class GetStudentForLesson(CallbackData, prefix='open_students'):
+    id_lesson: int
+
+
+

@@ -1,7 +1,7 @@
 import psycopg2
 from core.sql.config_for_postgres import host, user, password, db_name
 from core.sql import query_SQL
-from core.utils.parser import get_dict_lesson, get_lesson_from_cursor
+from core.utils.parser import get_dict_lesson, get_student_id_from_cursor
 
 
 def connect():
@@ -126,6 +126,7 @@ def get_all_future_lessons():
 
 
 def get_lesson(lesson_id):
+    # по id урока возвращает данные об уроке
     connection = False
 
     try:
@@ -149,6 +150,32 @@ def get_lesson(lesson_id):
             connection.close()
             print('[INFO] PostgreSQL connection closed')
 
+
+def get_students_id_from_lesson(lesson_id):
+    # получить id студентов которые записаны на урок и данные о посещении, оплате
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_student_id_from_history
+            # Выполнение запроса
+            cursor.execute(query, (lesson_id,))
+            id_students = get_student_id_from_cursor(cursor)
+
+            print('[INFO] Data was succefully received')
+
+            return id_students
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
 
 
 # with connection.cursor() as cursor:
