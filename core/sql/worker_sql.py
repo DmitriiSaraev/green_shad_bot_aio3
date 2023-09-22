@@ -1,7 +1,8 @@
 import psycopg2
 from core.sql.config_for_postgres import host, user, password, db_name
 from core.sql import query_SQL
-from core.utils.parser import get_dict_lesson, get_student_id_from_cursor
+from core.utils.parser import (get_dict_lesson, get_student_id_from_cursor,
+                               get_party_from_cursor)
 
 
 def connect():
@@ -77,7 +78,7 @@ def add_user(first_name,
 
 ### Блок работы с расписанием ###
 
-def add_lesson(date, start_lesson, and_lesson):
+def add_lesson(date, start_lesson, end_lesson):
     connection = False
 
     try:
@@ -86,7 +87,7 @@ def add_lesson(date, start_lesson, and_lesson):
         with connection.cursor() as cursor:
             query = query_SQL.add_lesson
             # Значения для вставки:
-            values = (date, start_lesson, and_lesson)
+            values = (date, start_lesson, end_lesson)
             # Выполнение запроса
             cursor.execute(query, values)
             print('[INFO] Data was succefully inserted')
@@ -176,6 +177,59 @@ def get_students_id_from_lesson(lesson_id):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+def get_active_party():
+    # Получить все активные группы
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_active_party
+            # Выполнение запроса
+            cursor.execute(query)
+            party = get_party_from_cursor(cursor)
+
+            print('[INFO] Data was succefully received')
+
+            return party
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def add_party(date, name):
+    # Создать группу
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_party
+            # Значения для вставки:
+            values = (date, name)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was succefully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
 
 
 # with connection.cursor() as cursor:

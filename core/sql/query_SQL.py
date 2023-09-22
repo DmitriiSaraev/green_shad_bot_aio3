@@ -32,7 +32,7 @@ craate_table_schedule = """CREATE TABLE IF NOT EXISTS schedule(
     id serial PRIMARY KEY,
     date DATE,
     start_lesson TIME,
-    and_lesson TIME,
+    end_lesson TIME,
     student INT REFERENCES users (id),
     party INT REFERENCES party (id)
 );
@@ -41,7 +41,7 @@ craate_table_schedule = """CREATE TABLE IF NOT EXISTS schedule(
 
 add_lesson = """
     INSERT INTO schedule(
-    date, start_lesson, and_lesson  
+    date, start_lesson, end_lesson  
     )
     VALUES (%s, %s, %s)
     """
@@ -52,9 +52,48 @@ craate_table_party = """CREATE TABLE IF NOT EXISTS party(
     id serial PRIMARY KEY,
     create_date DATE,
     update_date DATE,
-    name VARCHAR(50)
+    name VARCHAR(50),
+    active BOOLEAN DEFAULT TRUE
 );
 """
+
+# Добавить группу
+add_party = """
+    INSERT INTO party(
+    create_date, name
+    )
+    VALUES (%s, %s)
+"""
+
+
+
+# Создание таблицы Учеников в группе
+craate_table_student_in_group = """CREATE TABLE IF NOT EXISTS student_in_group(
+    id serial PRIMARY KEY,
+    create_date DATE,
+    update_date DATE,
+    party INT REFERENCES party (id),
+    student INT REFERENCES users (id),
+    active BOOLEAN DEFAULT TRUE
+);
+"""
+
+
+# Добавить ученика в группу
+add_student_in_party = """
+    INSERT INTO student_in_group(
+    create_date, party, student  
+    )
+    VALUES (%s, %s, %s)
+"""
+
+
+# Получить все активные группы
+get_active_party = """
+    SELECT * FROM party
+    WHERE active = TRUE
+"""
+
 
 
 # Получить все уроки которые еще будут, прошедшие не выдает
@@ -82,6 +121,7 @@ craate_table_lessons_history = """CREATE TABLE IF NOT EXISTS lessons_history(
 );
 """
 
+# Получить список студентов записанных на урок из таблицы история уроков
 get_student_id_from_history = """
     SELECT student, visit, payment, comment FROM lessons_history
     WHERE id_lesson = %s

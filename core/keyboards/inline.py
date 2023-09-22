@@ -2,7 +2,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core.utils.parser import pars_date, pars_time
-from core.utils.callback_data import OpenLessonCallback, GetStudentForLesson
+from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
+                                      AddPartyToLesson, AddStudentToLesson,
+                                      ShowPartyForAddToLesson)
 
 
 def get_inline_keyboard_for_admin():
@@ -38,7 +40,7 @@ def get_keyboard_lessons(lessons):
         builder.button(text=f"Дата: {pars_date(lesson['date'])}, \r\n"
                             f"Начало урока: "
                             f"{pars_time(lesson['start_lesson'])}\r\n"
-                            f"Конец урока: {pars_time(lesson['and_lesson'])}",
+                            f"Конец урока: {pars_time(lesson['end_lesson'])}",
                        callback_data=
                        OpenLessonCallback(id_lesson=lesson['id_lesson']))
 
@@ -52,7 +54,8 @@ def get_keyboard_id_lesson(lesson):
     builder = InlineKeyboardBuilder()
 
     builder.button(text='Ученики',
-                   callback_data=GetStudentForLesson(id_lesson=lesson['id_lesson']))
+                   callback_data=
+                   GetStudentForLesson(id_lesson=int(lesson['id_lesson'])))
     builder.button(text='Группа',
                    callback_data='_')
     builder.button(text='Изменить время',
@@ -69,15 +72,40 @@ def get_keyboard_id_lesson(lesson):
     return builder.as_markup()
 
 
-def get_inline_keyboard_add_student_to_lesson():
+def get_inline_keyboard_add_student_to_lesson(lesson_id):
     # для записи ученика на урок
     builder = InlineKeyboardBuilder()
     builder.button(text='Записать группу',
-                   callback_data='add_group_to_lesson')
+                   callback_data=AddPartyToLesson(id_lesson=lesson_id))
     builder.button(text='Записать ученика',
-                   callback_data='add_student_to_lesson')
+                   callback_data=AddStudentToLesson(id_lesson=lesson_id))
 
     return builder.as_markup()
+
+
+def keyboard_for_working_with_students():
+    builder = InlineKeyboardBuilder()
+    builder.button(text='Редактировать ученика',
+                   callback_data='edit_student')
+
+    builder.button(text='Добавить группу',
+                   callback_data='add_party')
+
+    return builder.as_markup()
+
+
+def keyboard_add_party_to_lesson(lesson_id, list_party):
+    builder = InlineKeyboardBuilder()
+
+    for party in list_party:
+        builder.button(text=f'{party["name"]}',
+                       callback_data=
+                       ShowPartyForAddToLesson(lesson_id=lesson_id,
+                                               party_id=party['party_id'],
+                                               party_name=party['name']))
+
+    return builder.as_markup()
+
 
 
 

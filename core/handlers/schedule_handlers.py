@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram import types
@@ -7,16 +9,23 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    get_keyboard_lessons,
-                                   get_keyboard_id_lesson)
-from core.utils.callback_data import OpenLessonCallback, GetStudentForLesson
-from core.utils.statesform import StateSchedule
+                                   get_keyboard_id_lesson,
+                                   get_inline_keyboard_add_student_to_lesson,
+                                   keyboard_for_working_with_students,
+                                   keyboard_add_party_to_lesson)
+
+from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
+                                      AddPartyToLesson)
+from core.utils.statesform import StateSchedule, StateAddParty
 from core.utils.parser import (main_date_parser,
                                pars_date,
                                pars_time)
+
 from core.sql.worker_sql import (add_lesson,
                                  get_all_future_lessons,
                                  get_lesson,
-                                 get_students_id_from_lesson)
+                                 get_students_id_from_lesson, get_active_party,
+                                 add_party)
 
 
 
@@ -83,13 +92,13 @@ async def create_new_lesson(message: types.Message, state: FSMContext):
 
     lesson = add_lesson(date_dict['date'],
                         date_dict['start_lesson'],
-                        date_dict['and_lesson']
+                        date_dict['end_lesson']
                         )
 
     await message.answer(f'Создан урок дата: {pars_date(date_dict["date"])}\r\n'
                          f'Время начала:'
                          f' {pars_time(date_dict["start_lesson"])}\r\n'
-                         f'Конец урока: {pars_time(date_dict["and_lesson"])}')
+                         f'Конец урока: {pars_time(date_dict["end_lesson"])}')
 
     await state.clear()
 
@@ -116,7 +125,8 @@ async def get_schedule(callback: types.CallbackQuery):
 @schedule_router.callback_query(OpenLessonCallback.filter())
 async def callbacks_lesson_fub(callback: types.CallbackQuery,
                                callback_data: OpenLessonCallback):
-    lesson = get_lesson(callback_data.id_lesson)
+    list_lesson = get_lesson(callback_data.id_lesson)
+    lesson = list_lesson[0]
 
     keyboard = get_keyboard_id_lesson(lesson)
     await callback.message.answer(text=f'Урок дата {pars_date(lesson["date"])}\r\n'
@@ -132,25 +142,68 @@ async def open_students(callback: types.CallbackQuery,
                         callback_data: GetStudentForLesson):
 
     # выводит список студентов которые записаны на выбранный урок
+    # или кнопки для записи на урок
 
     lesson_id = callback_data.id_lesson
     students_id = get_students_id_from_lesson(lesson_id)
 
+    if len(students_id) == 0:
+        keyboard = get_inline_keyboard_add_student_to_lesson(lesson_id)
+        await callback.message.answer(text='На данный урок ни кто не записан',
+                                      reply_markup=keyboard)
+
+
     await callback.answer()
 
 
-@schedule_router.callback_query(F.data == 'add_group_to_lesson')
-async def add_group_to_lesson(callback: types.CallbackQuery):
-    lessons = get_all_future_lessons()
-    keyboard = get_keyboard_lessons(lessons)
+@schedule_router.callback_query(AddPartyToLesson.filter())
+async def add_party_to_lesson(callback: types.CallbackQuery,
+                              callback_data: AddPartyToLesson):
+    lesson_id = callback_data.id_lesson
+    list_party = get_active_party()
 
-    if len(lessons) == 0:
-        await callback.message.answer(text='Уроков нет.',
-                                      reply_markup=keyboard)
-    else:
-        await callback.message.answer(text='Вот оно - расписание твоей мечты:',
-                                      reply_markup=keyboard)
+    keyboard = keyboard_add_party_to_lesson(lesson_id, list_party)
+    await callback.message.answer(text='Такие вот группы у нас',
+                                  reply_markup=keyboard)
+
+
+    # print(list_party)
+
+
+    # keyboard = get_keyboard_lessons()
     await callback.answer()
 
 
+@schedule_router.callback_query(F.data == 'get_buttons_for_work_students')
+async def get_buttons_for_working_with_students(callback: types.CallbackQuery):
+    keyboard = keyboard_for_working_with_students()
 
+    await callback.message.answer(text='Выбирай',
+                                  reply_markup=keyboard)
+
+    await callback.answer()
+
+
+### Блок создания группы ###
+@schedule_router.callback_query(F.data == 'add_party')
+async def add_new_party(callback: types.CallbackQuery,
+                            state: FSMContext):
+    await callback.message.answer(text='Введи название группы')
+    await state.set_state(StateAddParty.INPUT_NAME)
+    await callback.answer()
+
+
+@schedule_router.message(StateAddParty.INPUT_NAME)
+async def get_name_for_new_party(message: types.Message,
+                                 state: FSMContext):
+
+    date = datetime.date.today()
+    name = message.text
+
+    party = add_party(date, name)
+    await message.answer(text=f'Созданая группа: {name}')
+
+
+    await state.clear()
+
+### Конец блока создания группы ###

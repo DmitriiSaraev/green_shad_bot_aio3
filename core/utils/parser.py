@@ -34,12 +34,12 @@ def main_date_parser(data):
 
     # Получить время окончания урока
     duration_lesson = timedelta(minutes=duration_lesson)
-    and_lesson = start_lesson + duration_lesson
+    end_lesson = start_lesson + duration_lesson
 
     date_dict = {
         'date': date_lesson,
         'start_lesson': start_lesson,
-        'and_lesson': and_lesson
+        'end_lesson': end_lesson
     }
     return date_dict
 
@@ -81,7 +81,7 @@ def get_dict_lesson(cursor):
         id_lesson = lesson[0]
         date = lesson[1]
         start_lesson = lesson[2]
-        and_lesson = lesson[3]
+        end_lesson = lesson[3]
         student = lesson[4]
         party = lesson[5]
 
@@ -89,7 +89,7 @@ def get_dict_lesson(cursor):
             'id_lesson': id_lesson,
             'date': date,
             'start_lesson': start_lesson,
-            'and_lesson': and_lesson,
+            'end_lesson': end_lesson,
             'student': student,
             'party': party
         }
@@ -122,6 +122,30 @@ def get_student_id_from_cursor(cursor):
         list_student_id_from_lesson.append(dict_student_id)
 
     return list_student_id_from_lesson
+
+
+def get_party_from_cursor(cursor):
+    list_party = []
+
+    for party in cursor:
+        party_id = party[0]
+        create_date = party[1]
+        update_date = party[2]
+        name = party[3]
+        active = party[4]
+
+        dict_student_id = {
+            'party_id': party_id,
+            'create_date': create_date,
+            'update_date': update_date,
+            'name': name,
+            'active': active
+        }
+
+        list_party.append(dict_student_id)
+
+    return list_party
+
 
 # (12, datetime.date(2023, 9, 16), datetime.time(18, 0), datetime.time(18, 45), None, None)
 # (13, datetime.date(2023, 9, 16), datetime.time(21, 0), datetime.time(21, 45), None, None)

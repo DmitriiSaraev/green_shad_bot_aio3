@@ -11,10 +11,11 @@ class StepForm(StatesGroup):
 class StateSchedule(StatesGroup):
     INPUT_DATE = State()
     INPUT_START_LESSON = State()
-    INPUT_AND_LESSON = State()
+    INPUT_END_LESSON = State()
     INPUT_LESSON_DURATION = State()
 
 
-
+class StateAddParty(StatesGroup):
+    INPUT_NAME = State()
 
 
