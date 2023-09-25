@@ -2,7 +2,7 @@ import psycopg2
 from core.sql.config_for_postgres import host, user, password, db_name
 from core.sql import query_SQL
 from core.utils.parser import (get_dict_lesson, get_student_id_from_cursor,
-                               get_party_from_cursor)
+                               get_party_from_cursor, get_list_student)
 
 
 def connect():
@@ -230,6 +230,55 @@ def add_party(date, name):
             connection.close()
             print('[INFO] PostgreSQL connection closed')
 
+
+# Получить список студентов без группы
+def get_student_without_party():
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_student_without_party
+            # Выполнение запроса
+            cursor.execute(query)
+            list_students = get_list_student(cursor)
+            print('[INFO] Data was succefully received')
+
+            return list_students
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def add_student_to_party_worker(create_date, party, student):
+    # Добавить ученика в группу
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_student_in_party
+            # Значения для вставки:
+            values = (create_date, party, student)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was succefully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
 
 
 # with connection.cursor() as cursor:

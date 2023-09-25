@@ -127,3 +127,6 @@ get_student_id_from_history = """
     WHERE id_lesson = %s
 """
 
+# Получить список студентов без группы
+get_student_without_party = """SELECT * FROM USERS
+    WHERE party IS NULL"""

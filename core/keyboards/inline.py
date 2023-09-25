@@ -4,7 +4,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from core.utils.parser import pars_date, pars_time
 from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
                                       AddPartyToLesson, AddStudentToLesson,
-                                      ShowPartyForAddToLesson)
+                                      ShowPartyForAddToLesson,
+                                      AddStudentToParty,
+                                      ShowPartyForAddToStudent)
 
 
 def get_inline_keyboard_for_admin():
@@ -85,11 +87,15 @@ def get_inline_keyboard_add_student_to_lesson(lesson_id):
 
 def keyboard_for_working_with_students():
     builder = InlineKeyboardBuilder()
+
     builder.button(text='Редактировать ученика',
                    callback_data='edit_student')
-
     builder.button(text='Добавить группу',
                    callback_data='add_party')
+    builder.button(text='Добавить ученика в группу',
+                   callback_data='add_student_to_party')
+
+    builder.adjust(1, 1, 1)
 
     return builder.as_markup()
 
@@ -107,6 +113,31 @@ def keyboard_add_party_to_lesson(lesson_id, list_party):
     return builder.as_markup()
 
 
+def keyboard_get_students_without_group(students):
+    # Вывести студентов для записи в группу
+    builder = InlineKeyboardBuilder()
+
+    for student in students:
+        builder.button(text=f'{student["first_name"]} '
+                            f'{student["middle_name"]} '
+                            f'{student["last_name"]}',
+                       callback_data=
+                       AddStudentToParty(student_id=student["student_id"]))
+
+    builder.adjust(*[1 for item in students])
+
+    return builder.as_markup()
 
 
+# Для выбора группы в котороую добавить ученика
+def keyboard_add_student_to_party(student_id, list_party):
+    builder = InlineKeyboardBuilder()
 
+    for party in list_party:
+        builder.button(text=f'{party["name"]}',
+                       callback_data=
+                       ShowPartyForAddToStudent(student_id=student_id,
+                                                party_id=party['party_id']))
+
+    builder.adjust(*[1 for item in list_party])
+    return builder.as_markup()

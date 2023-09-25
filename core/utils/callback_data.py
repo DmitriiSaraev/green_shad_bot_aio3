@@ -30,5 +30,16 @@ class ShowPartyForAddToLesson(CallbackData, prefix='add_party_to_lesson'):
     party_name: str
 
 
+class AddStudentToParty(CallbackData, prefix='get_student_for_party'):
+    student_id: int
+
+
+class ShowPartyForAddToStudent(CallbackData, prefix='add_student_to_party'):
+    student_id: int
+    party_id: int
+
+
+
+
 
 

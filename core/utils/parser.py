@@ -147,6 +147,29 @@ def get_party_from_cursor(cursor):
     return list_party
 
 
+def get_list_student(cursor):
+    list_students = []
+
+    for student in cursor:
+        student_id = student[0]
+        first_name = student[1]
+        middle_name = student[2]
+        last_name = student[3]
+
+        dict_student_id = {
+            'student_id': student_id,
+            'first_name': first_name,
+            'middle_name': middle_name,
+            'last_name': last_name
+        }
+
+        list_students.append(dict_student_id)
+
+    return list_students
+
+
+
+
 # (12, datetime.date(2023, 9, 16), datetime.time(18, 0), datetime.time(18, 45), None, None)
 # (13, datetime.date(2023, 9, 16), datetime.time(21, 0), datetime.time(21, 45), None, None)
 
