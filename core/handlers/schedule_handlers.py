@@ -14,12 +14,14 @@ from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    keyboard_for_working_with_students,
                                    keyboard_add_party_to_lesson,
                                    keyboard_get_students_without_group,
-                                   keyboard_add_student_to_party)
+                                   keyboard_add_student_to_party,
+                                   keyboard_choice_student_for_lesson)
 
 from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
                                       AddPartyToLesson,
                                       ShowPartyForAddToStudent,
-                                      AddStudentToParty)
+                                      AddStudentToParty, AddStudentToLesson,
+                                      StudentChoice)
 from core.utils.statesform import StateSchedule, StateAddParty
 from core.utils.parser import (main_date_parser,
                                pars_date,
@@ -30,7 +32,8 @@ from core.sql.worker_sql import (add_lesson,
                                  get_lesson,
                                  get_students_id_from_lesson, get_active_party,
                                  add_party, get_student_without_party,
-                                 add_student_to_party_worker)
+                                 add_student_to_party_worker,
+                                 add_student_to_lesson_worker)
 
 
 
@@ -220,9 +223,9 @@ async def get_name_for_new_party(message: types.Message,
 @schedule_router.callback_query(F.data == 'add_student_to_party')
 async def get_student_for_party(callback: types.CallbackQuery):
     students = get_student_without_party()
-    list_party = get_active_party()
 
-    keyboard = keyboard_get_students_without_group(students)
+    keyboard = keyboard_get_students_without_group(
+        'show_party_for_add_student', students)
 
 
     await callback.message.answer(text='Выбирай ученика',
@@ -231,7 +234,9 @@ async def get_student_for_party(callback: types.CallbackQuery):
 
 
 # Показать группы в которые можно записаться
-@schedule_router.callback_query(AddStudentToParty.filter())
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'show_party_for_add_student')
+)
 async def show_party_for_add_student(callback: types.CallbackQuery,
                                      callback_data: AddStudentToParty):
     student_id = callback_data.student_id
@@ -253,7 +258,36 @@ async def add_student_to_party(callback: types.CallbackQuery,
 
     add_student_to_party_worker(datetime.date.today(), party_id, student_id)
 
-    await callback.answer(text=f'Ученик добавлен в группу')
+    await callback.message.answer(text=f'Ученик добавлен в группу')
+    await callback.answer()
+
+
+# Показать клаву с учениками, для записи на урок
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'show_student_for_add_to_lesson'))
+async def show_student_for_add_lesson(callback: types.CallbackQuery,
+                                     callback_data: AddStudentToParty):
+    action = 'add_student_to_lesson'
+    students = get_student_without_party()
+    lesson_id = callback_data.lesson_id
+
+    keyboard = keyboard_get_students_without_group(action, students, lesson_id)
+    await callback.message.answer(text='Выбери ученика',
+                                  reply_markup=keyboard)
+
+    await callback.answer()
+
+
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'add_student_to_lesson'))
+async def add_student_to_lesson(callback: types.CallbackQuery,
+                                callback_data: AddStudentToLesson):
+    student_id = callback_data.student_id
+    lesson_id = callback_data.lesson_id
+
+    add_student_to_lesson_worker(lesson_id, student_id)
+
+    await callback.message.answer(text=f'Ученик записан на урок')
     await callback.answer()
 
 

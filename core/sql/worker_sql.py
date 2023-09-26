@@ -281,6 +281,31 @@ def add_student_to_party_worker(create_date, party, student):
             print('[INFO] PostgreSQL connection closed')
 
 
+def add_student_to_lesson_worker(lesson_id, student_id):
+    # Записать ученика на урок
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_student_to_lesson
+            # Значения для вставки:
+            values = (lesson_id, student_id)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was successfully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
 # with connection.cursor() as cursor:
 #     cursor.execute(
 #         """SELECT nick_name FROM users WHERE first_name = 'Oleg';"""

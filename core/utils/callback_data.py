@@ -31,12 +31,20 @@ class ShowPartyForAddToLesson(CallbackData, prefix='add_party_to_lesson'):
 
 
 class AddStudentToParty(CallbackData, prefix='get_student_for_party'):
-    student_id: int
+    action: str
+    student_id: Optional[int] = None
+    lesson_id: Optional[int] = None
 
 
 class ShowPartyForAddToStudent(CallbackData, prefix='add_student_to_party'):
     student_id: int
     party_id: int
+
+
+class StudentChoice(CallbackData, prefix='student_choice'):
+    student_id: int
+    lesson_id: int
+
 
 
 

@@ -130,3 +130,13 @@ get_student_id_from_history = """
 # Получить список студентов без группы
 get_student_without_party = """SELECT * FROM USERS
     WHERE party IS NULL"""
+
+
+add_student_to_lesson = """
+    INSERT INTO lessons_history(
+    id_lesson, student  
+    )
+    VALUES (%s, %s) 
+"""
+
+

@@ -80,7 +80,9 @@ def get_inline_keyboard_add_student_to_lesson(lesson_id):
     builder.button(text='Записать группу',
                    callback_data=AddPartyToLesson(id_lesson=lesson_id))
     builder.button(text='Записать ученика',
-                   callback_data=AddStudentToLesson(id_lesson=lesson_id))
+                   callback_data=AddStudentToParty(
+                       action='show_student_for_add_to_lesson',
+                       lesson_id=lesson_id))
 
     return builder.as_markup()
 
@@ -110,19 +112,23 @@ def keyboard_add_party_to_lesson(lesson_id, list_party):
                                                party_id=party['party_id'],
                                                party_name=party['name']))
 
+    builder.adjust(*[1 for item in list_party])
     return builder.as_markup()
 
 
-def keyboard_get_students_without_group(students):
+def keyboard_get_students_without_group(action, students, lesson_id=None):
     # Вывести студентов для записи в группу
     builder = InlineKeyboardBuilder()
+
 
     for student in students:
         builder.button(text=f'{student["first_name"]} '
                             f'{student["middle_name"]} '
                             f'{student["last_name"]}',
                        callback_data=
-                       AddStudentToParty(student_id=student["student_id"]))
+                       AddStudentToParty(action=action,
+                                         student_id=student["student_id"],
+                                         lesson_id=lesson_id))
 
     builder.adjust(*[1 for item in students])
 
@@ -141,3 +147,7 @@ def keyboard_add_student_to_party(student_id, list_party):
 
     builder.adjust(*[1 for item in list_party])
     return builder.as_markup()
+
+
+def keyboard_choice_student_for_lesson(student_list, lesson_id):
+    pass
