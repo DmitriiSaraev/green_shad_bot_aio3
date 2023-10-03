@@ -75,6 +75,32 @@ def add_user(first_name,
             print('[INFO] PostgreSQL connection closed')
 
 
+# Получить данные о пользователях по id
+def get_user_data(list_id_user):
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_user_sql
+            # Выполнение запроса
+            cursor.execute(query, (list_id_user,))
+            users = get_list_student(cursor)
+            print('[INFO] Data was succefully received')
+
+            return users
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+
 
 ### Блок работы с расписанием ###
 
@@ -281,6 +307,31 @@ def add_student_to_party_worker(create_date, party, student):
             print('[INFO] PostgreSQL connection closed')
 
 
+def add_party_id_to_users_worker(party_id, student_id):
+    # Записать id группы в таблицу users
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_party_id_to_users
+            # Значения для вставки:
+            values = (party_id, student_id)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was succefully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
 def add_student_to_lesson_worker(lesson_id, student_id):
     # Записать ученика на урок
 
@@ -304,6 +355,33 @@ def add_student_to_lesson_worker(lesson_id, student_id):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+def add_student_to_lesson_worker(lesson_id, party_id):
+    # Записать группу на урок
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_party_to_lesson
+            # Значения для вставки:
+            values = (lesson_id, party_id)
+            # Выполнение запроса
+            cursor.execute(query, values)
+            print('[INFO] Data was successfully inserted')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
 
 
 # with connection.cursor() as cursor:

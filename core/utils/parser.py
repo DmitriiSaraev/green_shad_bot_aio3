@@ -108,12 +108,14 @@ def get_student_id_from_cursor(cursor):
 
     for lesson in cursor:
         student_id = lesson[0]
-        visit = lesson[1]
-        payment = lesson[2]
-        comment = lesson[3]
+        party = lesson[1]
+        visit = lesson[2]
+        payment = lesson[3]
+        comment = lesson[4]
 
         dict_student_id = {
             'student_id': student_id,
+            'party_id': party,
             'visit': visit,
             'payment': payment,
             'comment': comment
@@ -168,6 +170,16 @@ def get_list_student(cursor):
     return list_students
 
 
+def get_user_id(users: dict) -> list:
+    list_user_id = []
+
+    for user in users:
+        user_id = user['student_id']
+        list_user_id.append(user_id)
+
+    tuple_id = tuple(list_user_id)
+
+    return tuple_id
 
 
 # (12, datetime.date(2023, 9, 16), datetime.time(18, 0), datetime.time(18, 45), None, None)

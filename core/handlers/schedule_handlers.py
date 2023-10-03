@@ -15,17 +15,18 @@ from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    keyboard_add_party_to_lesson,
                                    keyboard_get_students_without_group,
                                    keyboard_add_student_to_party,
-                                   keyboard_choice_student_for_lesson)
+                                   keyboard_choice_student_for_lesson,
+                                   get_keyboard_recorded_student_to_lesson_and_edit_lesson)
 
 from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
                                       AddPartyToLesson,
                                       ShowPartyForAddToStudent,
                                       AddStudentToParty, AddStudentToLesson,
-                                      StudentChoice)
+                                      StudentChoice, ShowPartyForAddToLesson)
 from core.utils.statesform import StateSchedule, StateAddParty
 from core.utils.parser import (main_date_parser,
                                pars_date,
-                               pars_time)
+                               pars_time, get_user_id)
 
 from core.sql.worker_sql import (add_lesson,
                                  get_all_future_lessons,
@@ -33,7 +34,8 @@ from core.sql.worker_sql import (add_lesson,
                                  get_students_id_from_lesson, get_active_party,
                                  add_party, get_student_without_party,
                                  add_student_to_party_worker,
-                                 add_student_to_lesson_worker)
+                                 add_student_to_lesson_worker,
+                                 add_party_id_to_users_worker, get_user_data)
 
 
 
@@ -153,12 +155,23 @@ async def open_students(callback: types.CallbackQuery,
     # или кнопки для записи на урок
 
     lesson_id = callback_data.id_lesson
-    students_id = get_students_id_from_lesson(lesson_id)
+    students_data_id = get_students_id_from_lesson(lesson_id)
 
-    if len(students_id) == 0:
+    if len(students_data_id) == 0:
         keyboard = get_inline_keyboard_add_student_to_lesson(lesson_id)
         await callback.message.answer(text='На данный урок ни кто не записан',
                                       reply_markup=keyboard)
+    else:
+        students_id = get_user_id(students_data_id)
+        students = get_user_data(students_id) # Получить имена студентов
+        keyboard = get_keyboard_recorded_student_to_lesson_and_edit_lesson(
+            lesson_id,
+            students
+        )
+
+        await callback.message.answer(text='Список записанных:',
+                                  reply_markup=keyboard)
+
 
 
     await callback.answer()
@@ -180,6 +193,25 @@ async def add_party_to_lesson(callback: types.CallbackQuery,
 
     # keyboard = get_keyboard_lessons()
     await callback.answer()
+
+
+@schedule_router.callback_query(ShowPartyForAddToLesson.filter())
+async def choice_and_add_party_to_lesson(
+        callback: types.CallbackQuery,
+        callback_data: ShowPartyForAddToStudent):
+# Записать группу на урок
+
+    lesson_id = callback_data.lesson_id
+    party_id = callback_data.party_id
+    party_name = callback_data.party_name
+
+    add_student_to_lesson_worker(lesson_id, party_id)
+
+    await callback.message.answer(text=f'Группа записана на урок')
+    await callback.answer()
+
+
+
 
 
 @schedule_router.callback_query(F.data == 'get_buttons_for_work_students')
@@ -257,6 +289,7 @@ async def add_student_to_party(callback: types.CallbackQuery,
     party_id = callback_data.party_id
 
     add_student_to_party_worker(datetime.date.today(), party_id, student_id)
+    add_party_id_to_users_worker(party_id, student_id)
 
     await callback.message.answer(text=f'Ученик добавлен в группу')
     await callback.answer()

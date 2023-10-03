@@ -11,10 +11,10 @@ create_table = """CREATE TABLE IF NOT EXISTS users(
         update_date DATE DEFAULT CURRENT_DATE,
         studies BOOLEAN DEFAULT FALSE,
         role VARCHAR(10),
-        status VARCHAR(7),
+        status INT REFERENCES statuses (id),
         id_kinsman INTEGER,
         full_name_telegram VARCHAR(255),
-        party VARCHAR(255),
+        party INT REFERENCES party (id),
         chat_id INTEGER
         );"""
 
@@ -87,6 +87,13 @@ add_student_in_party = """
     VALUES (%s, %s, %s)
 """
 
+# Добавить id группы в таблицу users
+add_party_id_to_users = """
+    UPDATE users
+    SET party = %s
+    WHERE id = %s;
+"""
+
 
 # Получить все активные группы
 get_active_party = """
@@ -123,9 +130,16 @@ craate_table_lessons_history = """CREATE TABLE IF NOT EXISTS lessons_history(
 
 # Получить список студентов записанных на урок из таблицы история уроков
 get_student_id_from_history = """
-    SELECT student, visit, payment, comment FROM lessons_history
+    SELECT student, party, visit, payment, comment FROM lessons_history
     WHERE id_lesson = %s
 """
+
+
+# Получить юзеров по id
+get_user_sql = """
+SELECT * FROM users WHERE id IN %s
+"""
+
 
 # Получить список студентов без группы
 get_student_without_party = """SELECT * FROM USERS
@@ -140,3 +154,18 @@ add_student_to_lesson = """
 """
 
 
+add_party_to_lesson = """
+    INSERT INTO lessons_history(
+    id_lesson, party  
+    )
+    VALUES (%s, %s) 
+"""
+
+
+
+
+craate_table_schedule = """CREATE TABLE IF NOT EXISTS statuses(
+    id serial PRIMARY KEY,
+    name VARCHAR(15) 
+);
+"""
