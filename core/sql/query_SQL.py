@@ -110,7 +110,7 @@ WHERE date > CURRENT_DATE OR
 ORDER BY date, start_lesson
 """
 
-
+# Получить урок по id
 get_lesson = """
     SELECT *
     FROM schedule
@@ -128,7 +128,7 @@ craate_table_lessons_history = """CREATE TABLE IF NOT EXISTS lessons_history(
 );
 """
 
-# Получить список студентов записанных на урок из таблицы история уроков
+# Получить список студентов и групп записанных на урок из таблицы история уроков
 get_student_id_from_history = """
     SELECT student, party, visit, payment, comment FROM lessons_history
     WHERE id_lesson = %s
@@ -140,6 +140,10 @@ get_user_sql = """
 SELECT * FROM users WHERE id IN %s
 """
 
+# Получить группы по id
+get_party_sql = """
+SELECT * FROM party WHERE id IN %s
+"""
 
 # Получить список студентов без группы
 get_student_without_party = """SELECT * FROM USERS

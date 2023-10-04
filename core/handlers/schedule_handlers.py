@@ -26,7 +26,7 @@ from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
 from core.utils.statesform import StateSchedule, StateAddParty
 from core.utils.parser import (main_date_parser,
                                pars_date,
-                               pars_time, get_user_id)
+                               pars_time, get_user_id, get_party_id)
 
 from core.sql.worker_sql import (add_lesson,
                                  get_all_future_lessons,
@@ -35,7 +35,7 @@ from core.sql.worker_sql import (add_lesson,
                                  add_party, get_student_without_party,
                                  add_student_to_party_worker,
                                  add_student_to_lesson_worker,
-                                 add_party_id_to_users_worker, get_user_data)
+                                 add_party_id_to_users_worker, get_user_data, get_party_data)
 
 
 
@@ -162,11 +162,16 @@ async def open_students(callback: types.CallbackQuery,
         await callback.message.answer(text='На данный урок ни кто не записан',
                                       reply_markup=keyboard)
     else:
-        students_id = get_user_id(students_data_id)
+        students_id = get_user_id(students_data_id) # Получить id студентов
         students = get_user_data(students_id) # Получить имена студентов
+
+        parties_id = get_party_id(students_data_id)
+        parties = get_party_data(parties_id)
+
         keyboard = get_keyboard_recorded_student_to_lesson_and_edit_lesson(
             lesson_id,
-            students
+            students,
+            parties
         )
 
         await callback.message.answer(text='Список записанных:',

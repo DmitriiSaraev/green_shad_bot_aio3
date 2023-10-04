@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, time
+from typing import Tuple, Any
 
 
 def date_parser(date):
@@ -170,7 +171,7 @@ def get_list_student(cursor):
     return list_students
 
 
-def get_user_id(users: dict) -> list:
+def get_user_id(users: dict) -> tuple[Any, ...]:
     list_user_id = []
 
     for user in users:
@@ -178,6 +179,18 @@ def get_user_id(users: dict) -> list:
         list_user_id.append(user_id)
 
     tuple_id = tuple(list_user_id)
+
+    return tuple_id
+
+
+def get_party_id(parties: dict) -> tuple[Any, ...]:
+    list_party_id = []
+
+    for party in parties:
+        party_id = party['party_id']
+        list_party_id.append(party_id)
+
+    tuple_id = tuple(list_party_id)
 
     return tuple_id
 

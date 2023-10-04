@@ -100,6 +100,28 @@ def get_user_data(list_id_user):
             print('[INFO] PostgreSQL connection closed')
 
 
+def get_party_data(parties_id):
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_party_sql
+            # Выполнение запроса
+            cursor.execute(query, (parties_id,))
+            parties = get_party_from_cursor(cursor)
+            print('[INFO] Data was succefully received')
+
+            return parties
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
 
 
 ### Блок работы с расписанием ###
@@ -357,7 +379,7 @@ def add_student_to_lesson_worker(lesson_id, student_id):
             print('[INFO] PostgreSQL connection closed')
 
 
-def add_student_to_lesson_worker(lesson_id, party_id):
+def add_party_to_lesson_worker(lesson_id, party_id):
     # Записать группу на урок
 
     connection = False
