@@ -304,6 +304,32 @@ def get_student_without_party():
             print('[INFO] PostgreSQL connection closed')
 
 
+# Получить всех учеников
+def get_all_students():
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_all_students
+            # Выполнение запроса
+            cursor.execute(query)
+            list_students = get_list_student(cursor)
+            print('[INFO] Data was succefully received')
+
+            return list_students
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+
 def add_student_to_party_worker(create_date, party, student):
     # Добавить ученика в группу
 

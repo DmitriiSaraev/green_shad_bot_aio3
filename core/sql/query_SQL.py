@@ -146,8 +146,12 @@ SELECT * FROM party WHERE id IN %s
 """
 
 # Получить список студентов без группы
-get_student_without_party = """SELECT * FROM USERS
+get_student_without_party = """SELECT * FROM users
     WHERE party IS NULL"""
+
+# Получить всех студентов
+get_all_students = """SELECT * FROM users"""
+
 
 
 add_student_to_lesson = """

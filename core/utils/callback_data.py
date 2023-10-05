@@ -33,7 +33,9 @@ class ShowPartyForAddToLesson(CallbackData, prefix='add_party_to_lesson'):
 class AddStudentToParty(CallbackData, prefix='get_student_for_party'):
     action: str
     student_id: Optional[int] = None
+    party_id: Optional[int] = None
     lesson_id: Optional[int] = None
+
 
 
 class ShowPartyForAddToStudent(CallbackData, prefix='add_student_to_party'):

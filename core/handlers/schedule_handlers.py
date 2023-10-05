@@ -35,7 +35,9 @@ from core.sql.worker_sql import (add_lesson,
                                  add_party, get_student_without_party,
                                  add_student_to_party_worker,
                                  add_student_to_lesson_worker,
-                                 add_party_id_to_users_worker, get_user_data, get_party_data)
+                                 add_party_id_to_users_worker, get_user_data,
+                                 get_party_data, add_party_to_lesson_worker,
+                                 get_all_students)
 
 
 
@@ -214,9 +216,9 @@ async def choice_and_add_party_to_lesson(
     party_id = callback_data.party_id
     party_name = callback_data.party_name
 
-    add_student_to_lesson_worker(lesson_id, party_id)
+    add_party_to_lesson_worker(lesson_id, party_id)
 
-    await callback.message.answer(text=f'Группа записана на урок')
+    await callback.message.answer(text=f'Группа {party_name}, записана на урок')
     await callback.answer()
 
 
@@ -308,7 +310,7 @@ async def add_student_to_party(callback: types.CallbackQuery,
 @schedule_router.callback_query(AddStudentToParty.filter(
     F.action == 'show_student_for_add_to_lesson'))
 async def show_student_for_add_lesson(callback: types.CallbackQuery,
-                                     callback_data: AddStudentToParty):
+                                      callback_data: AddStudentToParty):
     action = 'add_student_to_lesson'
     students = get_student_without_party()
     lesson_id = callback_data.lesson_id
@@ -318,6 +320,23 @@ async def show_student_for_add_lesson(callback: types.CallbackQuery,
                                   reply_markup=keyboard)
 
     await callback.answer()
+
+
+# Показать всех учеников для записи на урок #######################################################
+@schedule_router.callback_query(F.data == 'show_all_students')
+async def show_student_for_add_lesson(callback: types.CallbackQuery,
+                                      callback_data: AddStudentToParty):
+    action = 'add_student_to_lesson'
+    students = get_all_students()
+    lesson_id = callback_data.lesson_id
+
+    keyboard = keyboard_get_students_without_group(action, students, lesson_id)
+    await callback.message.answer(text='Выбери ученика',
+                                  reply_markup=keyboard)
+
+    await callback.answer()
+
+
 
 
 @schedule_router.callback_query(AddStudentToParty.filter(
