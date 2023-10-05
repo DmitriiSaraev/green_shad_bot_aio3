@@ -89,13 +89,19 @@ def get_inline_keyboard_add_student_to_lesson(lesson_id):
 
 def get_keyboard_recorded_student_to_lesson_and_edit_lesson(lesson_id,
                                                             students,
-                                                            party
+                                                            parties
                                                             ):
     # получить список учеников записанных на урок и кнопки для редактирования
     builder = InlineKeyboardBuilder()
 
     for student in students:
         builder.button(text=f'{student["first_name"]} {student["last_name"]}',
+                       callback_data=AddStudentToParty(
+                       action='show_student_for_add_to_lesson',
+                       lesson_id=lesson_id))
+
+    for party in parties:
+        builder.button(text=f'{party["name"]}',
                        callback_data=AddStudentToParty(
                        action='show_student_for_add_to_lesson',
                        lesson_id=lesson_id))

@@ -148,7 +148,7 @@ async def callbacks_lesson_fub(callback: types.CallbackQuery,
 
 
 @schedule_router.callback_query(GetStudentForLesson.filter())
-async def open_students(callback: types.CallbackQuery,
+async def show_students(callback: types.CallbackQuery,
                         callback_data: GetStudentForLesson):
 
     # выводит список студентов которые записаны на выбранный урок
@@ -163,10 +163,14 @@ async def open_students(callback: types.CallbackQuery,
                                       reply_markup=keyboard)
     else:
         students_id = get_user_id(students_data_id) # Получить id студентов
-        students = get_user_data(students_id) # Получить имена студентов
+        students = ()
+        if students_id != 0:
+            students = get_user_data(students_id) # Получить имена студентов
 
         parties_id = get_party_id(students_data_id)
-        parties = get_party_data(parties_id)
+        parties = ()
+        if parties_id != 0:
+            parties = get_party_data(parties_id)
 
         keyboard = get_keyboard_recorded_student_to_lesson_and_edit_lesson(
             lesson_id,
