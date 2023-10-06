@@ -128,6 +128,10 @@ craate_table_lessons_history = """CREATE TABLE IF NOT EXISTS lessons_history(
 );
 """
 
+delete_student_from_lesson = """
+    DELETE FROM lessons_history WHERE id_lesson = %s AND student = %s
+"""
+
 # Получить список студентов и групп записанных на урок из таблицы история уроков
 get_student_id_from_history = """
     SELECT student, party, visit, payment, comment FROM lessons_history

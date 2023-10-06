@@ -117,6 +117,10 @@ def get_keyboard_recorded_student_to_lesson_and_edit_lesson(lesson_id,
                    callback_data=AddStudentToParty(
                        action='show_student_for_add_to_lesson',
                        lesson_id=lesson_id))
+    builder.button(text='Удалить ученика',
+                   callback_data=AddStudentToParty(
+                       action='show_student_for_delete_from_lesson',
+                       lesson_id=lesson_id))
 
     builder.adjust(1, 1, *[1 for item in students])
 
