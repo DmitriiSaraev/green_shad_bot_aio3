@@ -2,7 +2,8 @@ import psycopg2
 from core.sql.config_for_postgres import host, user, password, db_name
 from core.sql import query_SQL
 from core.utils.parser import (get_dict_lesson, get_student_id_from_cursor,
-                               get_party_from_cursor, get_list_student)
+                               get_party_from_cursor, get_list_student,
+                               get_student_id_from_party_cursor)
 
 
 def connect():
@@ -429,6 +430,66 @@ def add_party_to_lesson_worker(lesson_id, party_id):
             connection.close()
             print('[INFO] PostgreSQL connection closed')
 
+
+
+def delete_student_from_lesson(action, student_id):
+    # Удалить студента с урока
+
+    if action == 'delete_student_from_lesson':
+        query = query_SQL.delete_student_from_lesson
+    elif action == 'delete_party_from_lesson':
+        query = query_SQL.delete_party_from_lesson
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            # Выполнение запроса
+            cursor.execute(query, (student_id,))
+            id_students = get_student_id_from_cursor(cursor)
+
+            print('[INFO] Data was succefully received')
+
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+
+
+
+def get_student_id_from_party(party_id):
+    # получить id студентов из групп
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.get_student_id_from_party_sql
+            # Выполнение запроса
+            cursor.execute(query, (party_id,))
+            id_students = get_student_id_from_party_cursor(cursor)
+
+            print('[INFO] Data was succefully received')
+
+            return id_students
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
 
 
 

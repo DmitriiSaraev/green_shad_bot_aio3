@@ -181,3 +181,18 @@ craate_table_schedule = """CREATE TABLE IF NOT EXISTS statuses(
     name VARCHAR(15) 
 );
 """
+
+
+delete_student_from_lesson = """
+    DELETE FROM lessons_history WHERE student = %s    
+"""
+
+delete_party_from_lesson = """
+    DELETE FROM lessons_history WHERE party = %s    
+"""
+
+
+get_student_id_from_party_sql = """
+    SELECT student FROM student_in_group
+    WHERE patry IN %s
+"""

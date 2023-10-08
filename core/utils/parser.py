@@ -83,16 +83,13 @@ def get_dict_lesson(cursor):
         date = lesson[1]
         start_lesson = lesson[2]
         end_lesson = lesson[3]
-        student = lesson[4]
-        party = lesson[5]
+
 
         dict_lessons = {
             'id_lesson': id_lesson,
             'date': date,
             'start_lesson': start_lesson,
-            'end_lesson': end_lesson,
-            'student': student,
-            'party': party
+            'end_lesson': end_lesson
         }
 
         list_dicts_lesson.append(dict_lessons)
@@ -125,6 +122,21 @@ def get_student_id_from_cursor(cursor):
         list_student_id_from_lesson.append(dict_student_id)
 
     return list_student_id_from_lesson
+
+
+def get_student_id_from_party_cursor(cursor):
+   # Получить id студентов из групп
+    list_student_id_from_party = []
+
+    # student, visit, payment, comment
+
+    for party in cursor:
+        student_id = party[0]
+        list_student_id_from_party.append(student_id)
+
+    tuple_id = tuple(list_student_id_from_party)
+
+    return tuple_id
 
 
 def get_party_from_cursor(cursor):

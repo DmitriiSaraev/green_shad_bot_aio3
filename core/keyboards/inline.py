@@ -58,8 +58,6 @@ def get_keyboard_id_lesson(lesson):
     builder.button(text='Ученики',
                    callback_data=
                    GetStudentForLesson(id_lesson=int(lesson['id_lesson'])))
-    builder.button(text='Группа',
-                   callback_data='_')
     builder.button(text='Изменить время',
                    callback_data='edit_date')
     builder.button(text='Изменить состав',
@@ -170,7 +168,9 @@ def keyboard_get_students_without_group(action, students, lesson_id=None):
                                          lesson_id=lesson_id))
 
     builder.button(text='Показать всех учеников',
-                   callback_data='show_all_students')
+                   callback_data=AddStudentToParty
+                   (action='show_all_students',
+                    lesson_id=lesson_id))
 
     builder.adjust(1, *[1 for item in students])
 
@@ -193,3 +193,37 @@ def keyboard_add_student_to_party(student_id, list_party):
 
 def keyboard_choice_student_for_lesson(student_list, lesson_id):
     pass
+
+
+def get_keyboard_delete_student_to_lesson(lesson_id, students,
+                                          students_from_party, parties):
+    # Получить список кого можно удалить
+    builder = InlineKeyboardBuilder()
+
+    for student in students:
+        builder.button(text=f'{student["first_name"]} {student["last_name"]}',
+                       callback_data=AddStudentToParty(
+                       action='delete_student_from_lesson',
+                       lesson_id=lesson_id,
+                       student_id=student['student_id']
+                       ))
+
+    for student in students_from_party:
+        builder.button(text=f'{student["first_name"]} {student["last_name"]}',
+                       callback_data=AddStudentToParty(
+                       action='delete_student_from_lesson',
+                       lesson_id=lesson_id,
+                       student_id=student['student_id']
+                       ))
+
+    for party in parties:
+        builder.button(text=f'{party["name"]}',
+                       callback_data=AddStudentToParty(
+                       action='delete_party_from_lesson',
+                       lesson_id=lesson_id,
+                       party_id=party['party_id']))
+
+
+    builder.adjust(*[1 for item in students])
+
+    return builder.as_markup()

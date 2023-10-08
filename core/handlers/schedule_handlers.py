@@ -16,7 +16,8 @@ from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    keyboard_get_students_without_group,
                                    keyboard_add_student_to_party,
                                    keyboard_choice_student_for_lesson,
-                                   get_keyboard_recorded_student_to_lesson_and_edit_lesson)
+                                   get_keyboard_recorded_student_to_lesson_and_edit_lesson,
+                                   get_keyboard_delete_student_to_lesson)
 
 from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
                                       AddPartyToLesson,
@@ -37,7 +38,8 @@ from core.sql.worker_sql import (add_lesson,
                                  add_student_to_lesson_worker,
                                  add_party_id_to_users_worker, get_user_data,
                                  get_party_data, add_party_to_lesson_worker,
-                                 get_all_students)
+                                 get_all_students, delete_student_from_lesson,
+                                 get_student_id_from_party)
 
 
 
@@ -322,10 +324,11 @@ async def show_student_for_add_lesson(callback: types.CallbackQuery,
     await callback.answer()
 
 
-# Показать всех учеников для записи на урок #######################################################
-@schedule_router.callback_query(F.data == 'show_all_students')
-async def show_student_for_add_lesson(callback: types.CallbackQuery,
-                                      callback_data: AddStudentToParty):
+# Показать всех учеников для записи на урок
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'show_all_students'))
+async def show_all_student_for_add_lesson(callback: types.CallbackQuery,
+                                          callback_data: AddStudentToParty):
     action = 'add_student_to_lesson'
     students = get_all_students()
     lesson_id = callback_data.lesson_id
@@ -337,6 +340,38 @@ async def show_student_for_add_lesson(callback: types.CallbackQuery,
     await callback.answer()
 
 
+# Удалить с урока ###########################################################################
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'show_student_for_delete_from_lesson'))
+async def show_all_student_for_add_lesson(callback: types.CallbackQuery,
+                                          callback_data: AddStudentToParty):
+    action = 'delete_student_from_lesson'
+    lesson_id = callback_data.lesson_id
+    students_data_id = get_students_id_from_lesson(lesson_id)
+    students_id = get_user_id(students_data_id)  # Получить id студентов
+    students = ()
+    if students_id != 0:
+        students = get_user_data(students_id)  # Получить имена студентов
+
+    parties_id = get_party_id(students_data_id)
+    parties = ()
+    if parties_id != 0:
+        parties = get_party_data(parties_id)
+        # нужно получить id студентов из группы
+        student_id_from_party = get_student_id_from_party(parties)
+        students_from_party = get_user_data(student_id_from_party)
+
+    keyboard = get_keyboard_delete_student_to_lesson(
+        lesson_id,
+        students,
+        students_from_party,
+        parties
+    )
+
+    await callback.message.answer(text='Кого удалить?',
+                                  reply_markup=keyboard)
+
+    await callback.answer()
 
 
 @schedule_router.callback_query(AddStudentToParty.filter(
@@ -351,4 +386,21 @@ async def add_student_to_lesson(callback: types.CallbackQuery,
     await callback.message.answer(text=f'Ученик записан на урок')
     await callback.answer()
 
+
+# Удалить с урока
+@schedule_router.callback_query(AddStudentToParty.filter(
+    (F.action == 'delete_student_from_lesson') |
+    (F.action == 'delete_party_from_lesson')))
+async def delete_from_lesson(callback: types.CallbackQuery,
+                             callback_data: AddStudentToLesson):
+
+    if callback_data.action == 'delete_student_from_lesson':
+        delete_student_from_lesson(callback_data.action, callback_data.student_id)
+    elif callback_data.action == 'delete_party_from_lesson':
+        delete_student_from_lesson(callback_data.action, callback_data.party_id)
+
+
+
+    await callback.message.answer(text=f'Ученик удален')
+    await callback.answer()
 
