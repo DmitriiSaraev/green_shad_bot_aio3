@@ -95,19 +95,18 @@ def get_keyboard_recorded_student_to_lesson_and_edit_lesson(lesson_id,
     for student in students:
         builder.button(text=f'{student["first_name"]} {student["last_name"]}',
                        callback_data=AddStudentToParty(
-                       action='open_student_card', # Переделать
+                           action='open_student_card',  # Переделать
                            # при нажатии записывается на урок, а должна
                            # открываться карточка ученика
-                       lesson_id=lesson_id),
+                           lesson_id=lesson_id),
                        student_id=student['student_id'])
 
     for party in parties:
         builder.button(text=f'{party["name"]}',
                        callback_data=AddStudentToParty(
-                       action='open_party_card',
-                       lesson_id=lesson_id,
-                       party_id=party['party_id']))
-
+                           action='open_party_card',
+                           lesson_id=lesson_id,
+                           party_id=party['party_id']))
 
     builder.button(text='Записать группу',
                    callback_data=AddPartyToLesson(id_lesson=lesson_id))
@@ -195,34 +194,25 @@ def keyboard_choice_student_for_lesson(student_list, lesson_id):
     pass
 
 
-def get_keyboard_delete_student_to_lesson(lesson_id, students,
-                                          students_from_party, parties):
+def get_keyboard_delete_student_to_lesson(lesson_id, students, parties):
     # Получить список кого можно удалить
     builder = InlineKeyboardBuilder()
+    if students:
+        for student in students:
+            builder.button(text=f'{student["first_name"]} {student["last_name"]}',
+                           callback_data=AddStudentToParty(
+                               action='delete_student_from_lesson',
+                               lesson_id=lesson_id,
+                               student_id=student['student_id']
+                           ))
 
-    for student in students:
-        builder.button(text=f'{student["first_name"]} {student["last_name"]}',
-                       callback_data=AddStudentToParty(
-                       action='delete_student_from_lesson',
-                       lesson_id=lesson_id,
-                       student_id=student['student_id']
-                       ))
-
-    for student in students_from_party:
-        builder.button(text=f'{student["first_name"]} {student["last_name"]}',
-                       callback_data=AddStudentToParty(
-                       action='delete_student_from_lesson',
-                       lesson_id=lesson_id,
-                       student_id=student['student_id']
-                       ))
-
-    for party in parties:
-        builder.button(text=f'{party["name"]}',
-                       callback_data=AddStudentToParty(
-                       action='delete_party_from_lesson',
-                       lesson_id=lesson_id,
-                       party_id=party['party_id']))
-
+    if parties:
+        for party in parties:
+            builder.button(text=f'{party["name"]}',
+                           callback_data=AddStudentToParty(
+                               action='delete_party_from_lesson',
+                               lesson_id=lesson_id,
+                               party_id=party['party_id']))
 
     builder.adjust(*[1 for item in students])
 

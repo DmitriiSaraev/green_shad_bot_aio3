@@ -392,10 +392,10 @@ def add_student_to_lesson_worker(lesson_id, student_id):
         with connection.cursor() as cursor:
             query = query_SQL.add_student_to_lesson
             # Значения для вставки:
-            values = (lesson_id, student_id)
+            values = (lesson_id, None, student_id)
             # Выполнение запроса
             cursor.execute(query, values)
-            print('[INFO] Data was successfully inserted')
+            print('[INFO] Ученик записан на урок')
 
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
@@ -404,6 +404,37 @@ def add_student_to_lesson_worker(lesson_id, student_id):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+def add_students_to_lesson_worker(lesson_id, student_ids, party_id):
+    # Записать много учеников на урок
+
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query = query_SQL.add_student_to_lesson
+
+            # Создаем список кортежей для вставки
+            values = [
+                (lesson_id, party_id, student_id)
+                for student_id in student_ids]
+
+            # Выполнение запроса с множественными значениями
+            cursor.executemany(query, values)
+
+            print('[INFO] Ученик(и) записан(ы) на урок')
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
 
 
 def add_party_to_lesson_worker(lesson_id, party_id):
@@ -420,7 +451,7 @@ def add_party_to_lesson_worker(lesson_id, party_id):
             values = (lesson_id, party_id)
             # Выполнение запроса
             cursor.execute(query, values)
-            print('[INFO] Data was successfully inserted')
+            print('[INFO] Группа записана на урок')
 
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
@@ -432,7 +463,7 @@ def add_party_to_lesson_worker(lesson_id, party_id):
 
 
 
-def delete_student_from_lesson(action, student_id):
+def delete_student_from_lesson(action, student_id, lesson_id):
     # Удалить студента с урока
 
     if action == 'delete_student_from_lesson':
@@ -447,7 +478,7 @@ def delete_student_from_lesson(action, student_id):
 
         with connection.cursor() as cursor:
             # Выполнение запроса
-            cursor.execute(query, (student_id,))
+            cursor.execute(query, (student_id, lesson_id))
             id_students = get_student_id_from_cursor(cursor)
 
             print('[INFO] Data was succefully received')

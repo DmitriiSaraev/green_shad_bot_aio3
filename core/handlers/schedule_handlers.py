@@ -39,7 +39,8 @@ from core.sql.worker_sql import (add_lesson,
                                  add_party_id_to_users_worker, get_user_data,
                                  get_party_data, add_party_to_lesson_worker,
                                  get_all_students, delete_student_from_lesson,
-                                 get_student_id_from_party)
+                                 get_student_id_from_party,
+                                 add_students_to_lesson_worker)
 
 
 
@@ -220,6 +221,12 @@ async def choice_and_add_party_to_lesson(
 
     add_party_to_lesson_worker(lesson_id, party_id)
 
+    list = []
+    list.append(party_id)
+    tuple_id = tuple(list)
+    student_ids = get_student_id_from_party(tuple_id)
+    add_students_to_lesson_worker(lesson_id, student_ids, party_id)
+
     await callback.message.answer(text=f'Группа {party_name}, записана на урок')
     await callback.answer()
 
@@ -355,16 +362,13 @@ async def show_all_student_for_add_lesson(callback: types.CallbackQuery,
 
     parties_id = get_party_id(students_data_id)
     parties = ()
-    if parties_id != 0:
+    if parties_id[0] is not None:
         parties = get_party_data(parties_id)
         # нужно получить id студентов из группы
-        student_id_from_party = get_student_id_from_party(parties)
-        students_from_party = get_user_data(student_id_from_party)
 
     keyboard = get_keyboard_delete_student_to_lesson(
         lesson_id,
         students,
-        students_from_party,
         parties
     )
 
@@ -395,9 +399,13 @@ async def delete_from_lesson(callback: types.CallbackQuery,
                              callback_data: AddStudentToLesson):
 
     if callback_data.action == 'delete_student_from_lesson':
-        delete_student_from_lesson(callback_data.action, callback_data.student_id)
+        delete_student_from_lesson(callback_data.action,
+                                   callback_data.student_id,
+                                   callback_data.lesson_id)
     elif callback_data.action == 'delete_party_from_lesson':
-        delete_student_from_lesson(callback_data.action, callback_data.party_id)
+        delete_student_from_lesson(callback_data.action,
+                                   callback_data.party_id,
+                                   callback_data.lesson_id)
 
 
 

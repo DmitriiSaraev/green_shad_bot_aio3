@@ -160,9 +160,9 @@ get_all_students = """SELECT * FROM users"""
 
 add_student_to_lesson = """
     INSERT INTO lessons_history(
-    id_lesson, student  
+    id_lesson, party, student  
     )
-    VALUES (%s, %s) 
+    VALUES (%s, %s, %s) 
 """
 
 
@@ -184,15 +184,15 @@ craate_table_schedule = """CREATE TABLE IF NOT EXISTS statuses(
 
 
 delete_student_from_lesson = """
-    DELETE FROM lessons_history WHERE student = %s    
+    DELETE FROM lessons_history WHERE student = %s AND id_lesson = %s   
 """
 
 delete_party_from_lesson = """
-    DELETE FROM lessons_history WHERE party = %s    
+    DELETE FROM lessons_history WHERE party = %s AND id_lesson = %s    
 """
 
 
 get_student_id_from_party_sql = """
     SELECT student FROM student_in_group
-    WHERE patry IN %s
+    WHERE party IN %s
 """
