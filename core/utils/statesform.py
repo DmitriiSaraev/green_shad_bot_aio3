@@ -19,3 +19,7 @@ class StateAddParty(StatesGroup):
     INPUT_NAME = State()
 
 
+class StateEditLesson(StatesGroup):
+    INPUT_DATE_EDIT = State()
+    INPUT_START_LESSON_EDIT = State()
+    INPUT_LESSON_DURATION_EDIT = State()

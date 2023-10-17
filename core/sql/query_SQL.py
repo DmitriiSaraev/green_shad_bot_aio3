@@ -138,6 +138,21 @@ get_student_id_from_history = """
     WHERE id_lesson = %s
 """
 
+# Получить завтрашние уроки ##################################################################
+get_lesson_on_date = """
+    SELECT *
+    FROM schedule
+    WHERE date = %s
+"""
+
+
+
+# Получить список студентов и групп записанных на завтрашний урок
+get_student_id_from_history_tomorrow = """
+    SELECT student, party, visit, payment, comment FROM lessons_history
+    WHERE id_lesson IN %s
+"""
+
 
 # Получить юзеров по id
 get_user_sql = """
@@ -195,4 +210,14 @@ delete_party_from_lesson = """
 get_student_id_from_party_sql = """
     SELECT student FROM student_in_group
     WHERE party IN %s
+"""
+
+# Удалить урок из таблицы расписания
+delete_lesson_from_schedule = """
+    DELETE FROM schedule WHERE id = %s    
+"""
+
+# Удалить урок из таблицы истории уроков
+delete_lesson_from_history = """
+    DELETE FROM lessons_history WHERE id_lesson = %s    
 """

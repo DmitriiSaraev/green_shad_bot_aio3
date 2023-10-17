@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
@@ -17,14 +17,15 @@ from core.keyboards.inline import (get_inline_keyboard_for_schedule,
                                    keyboard_add_student_to_party,
                                    keyboard_choice_student_for_lesson,
                                    get_keyboard_recorded_student_to_lesson_and_edit_lesson,
-                                   get_keyboard_delete_student_to_lesson)
+                                   get_keyboard_delete_student_to_lesson,
+                                   get_keyboard_for_edit_lessons)
 
 from core.utils.callback_data import (OpenLessonCallback, GetStudentForLesson,
                                       AddPartyToLesson,
                                       ShowPartyForAddToStudent,
                                       AddStudentToParty, AddStudentToLesson,
                                       StudentChoice, ShowPartyForAddToLesson)
-from core.utils.statesform import StateSchedule, StateAddParty
+from core.utils.statesform import StateSchedule, StateAddParty, StateEditLesson
 from core.utils.parser import (main_date_parser,
                                pars_date,
                                pars_time, get_user_id, get_party_id)
@@ -40,7 +41,8 @@ from core.sql.worker_sql import (add_lesson,
                                  get_party_data, add_party_to_lesson_worker,
                                  get_all_students, delete_student_from_lesson,
                                  get_student_id_from_party,
-                                 add_students_to_lesson_worker)
+                                 add_students_to_lesson_worker,
+                                 delete_from_schedule_and_history)
 
 
 
@@ -120,6 +122,69 @@ async def create_new_lesson(message: types.Message, state: FSMContext):
 ### Конец блока создания урока ###
 
 
+### Блок изменения урока #######################################
+
+@schedule_router.callback_query(AddStudentToParty.filter(
+    F.action == 'delete_lesson'))
+async def delete_lesson(callback: types.CallbackQuery,
+                        callback_data: AddStudentToParty):
+    lesson_id = callback_data.lesson_id
+
+    delete_from_schedule_and_history(lesson_id)
+
+    await callback.message.answer(text='Урок удален')
+
+    await callback.answer()
+
+
+#
+# @schedule_router.callback_query(AddStudentToParty.filter(
+#     F.action == 'edit_date'))
+# async def edit_lesson(callback: types.CallbackQuery,
+#                       callback_data: AddStudentToLesson):
+#
+#     lesson_id = callback_data.lesson_id
+#
+#     list_lessons = get_lesson(lesson_id)
+#     lesson = list_lessons[0]
+#
+#     now = datetime.now()
+#     datetime1 = datetime.combine(now, lesson['end_lesson'])
+#     datetime2 = datetime.combine(now, lesson['start_lesson'])
+#
+#     delta = datetime1 - datetime2
+#
+#     keyboard = get_keyboard_for_edit_lessons(lesson_id)
+#
+#
+#     await callback.message.answer(
+#         text=f'Начало урока: '
+#         f'{lesson["start_lesson"]}, '
+#         f'Конец урока: {lesson["end_lesson"]}, '
+#         f'Длительность: {delta}',
+#         reply_markup=keyboard)
+#     await callback.answer()
+
+# @schedule_router.callback_query(AddStudentToParty.filter(
+#     F.action == 'edit_day'))
+# async def edit_lesson(callback: types.CallbackQuery,
+#                       callback_data: AddStudentToLesson,
+#                       state: FSMContext):
+#     lesson_id = callback_data.lesson_id
+#
+#     await state.update_data(lesson_id=lesson_id)
+#
+#     await callback.message.answer(text='Введи новую дату в формате дд.мм.гг')
+#     await state.set_state(StateEditLesson.INPUT_DATE_EDIT)
+#     await callback.answer()
+#
+#
+# @schedule_router.message(StateEditLesson.INPUT_DATE_EDIT)
+# async def get_time_start_for_new_lesson(message: types.Message,
+#                                         state: FSMContext):
+#     await state.update_data(date=message.text)
+#     await message.answer('Введи время начала урока в формате чч.мм')
+#     await state.set_state(StateSchedule.INPUT_START_LESSON)
 
 ### Блок просморта расписания ###
 
@@ -257,7 +322,7 @@ async def add_new_party(callback: types.CallbackQuery,
 async def get_name_for_new_party(message: types.Message,
                                  state: FSMContext):
 
-    date = datetime.date.today()
+    date = datetime.now()
     name = message.text
 
     party = add_party(date, name)
@@ -347,7 +412,7 @@ async def show_all_student_for_add_lesson(callback: types.CallbackQuery,
     await callback.answer()
 
 
-# Удалить с урока ###########################################################################
+# Удалить с урока
 @schedule_router.callback_query(AddStudentToParty.filter(
     F.action == 'show_student_for_delete_from_lesson'))
 async def show_all_student_for_add_lesson(callback: types.CallbackQuery,

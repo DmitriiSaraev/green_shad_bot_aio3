@@ -1,4 +1,3 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core.utils.parser import pars_date, pars_time
@@ -15,6 +14,8 @@ def get_inline_keyboard_for_admin():
                    callback_data='get_buttons_for_work_schedule')
     builder.button(text='Ученики',
                    callback_data='get_buttons_for_work_students')
+    builder.button(text='Рассылка',
+                   callback_data='newsletter')
 
     # builder.adjust(1,1,1) сколько кнопок вывести в ряду
     # (по одной, в трех рядах)
@@ -59,15 +60,33 @@ def get_keyboard_id_lesson(lesson):
                    callback_data=
                    GetStudentForLesson(id_lesson=int(lesson['id_lesson'])))
     builder.button(text='Изменить время',
-                   callback_data='edit_date')
-    builder.button(text='Изменить состав',
-                   callback_data='edit_student')
+                   callback_data=AddStudentToParty(
+                       action='edit_date', lesson_id=int(lesson['id_lesson'])))
     builder.button(text='Отправить соообщение ученикам',
                    callback_data='send_message_lesson_student')
     builder.button(text='Отменить урок',
-                   callback_data='cansel_lesson')
+                   callback_data=AddStudentToParty(
+                       action='delete_lesson',
+                       lesson_id=int(lesson['id_lesson'])
+                   ))
 
     builder.adjust(1, 1, 1, 1, 1, 1, 1)
+
+    return builder.as_markup()
+
+def get_keyboard_for_edit_lessons(lesson_id):
+    builder = InlineKeyboardBuilder()
+
+    builder.button(text='Изменить дату',
+                   callback_data='edit_day')
+
+    builder.button(text='Изменить время',
+                   callback_data='edit_time')
+
+    builder.button(text='Изменить длительность',
+                   callback_data='edit_duration')
+
+    builder.adjust(1, 1, 1)
 
     return builder.as_markup()
 

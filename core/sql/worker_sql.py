@@ -150,6 +150,35 @@ def add_lesson(date, start_lesson, end_lesson):
             print('[INFO] PostgreSQL connection closed')
 
 
+def delete_from_schedule_and_history(lesson_id):
+    connection = False
+
+    try:
+        connection = connect()
+
+        with connection.cursor() as cursor:
+            query_schedule = query_SQL.delete_lesson_from_schedule
+            # Выполнение запроса
+            cursor.execute(query_schedule, (lesson_id,))
+
+            print('[INFO] Урок удален из таблицы Расписание')
+
+            query_history = query_SQL.delete_lesson_from_history
+            # Выполнение запроса
+            cursor.execute(query_history, (lesson_id,))
+
+            print('[INFO] Урок удален из таблицы История уроков')
+
+
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
 # Получить все уроки которые еще будут, прошедшие не выдает
 def get_all_future_lessons():
     connection = False
@@ -521,6 +550,11 @@ def get_student_id_from_party(party_id):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
+
+
+
+
+
 
 
 

@@ -170,12 +170,15 @@ def get_list_student(cursor):
         first_name = student[1]
         middle_name = student[2]
         last_name = student[3]
+        chat_id = student[16]
+
 
         dict_student_id = {
             'student_id': student_id,
             'first_name': first_name,
             'middle_name': middle_name,
-            'last_name': last_name
+            'last_name': last_name,
+            'chat_id': chat_id
         }
 
         list_students.append(dict_student_id)
@@ -206,6 +209,17 @@ def get_party_id(parties: dict) -> tuple[Any, ...]:
 
     return tuple_id
 
+
+def get_lessons_id(lessons: dict) -> tuple[Any, ...]:
+    list_lessons_id = []
+
+    for lesson in lessons:
+        lesson_id = lesson['id_lesson']
+        list_lessons_id.append(lesson_id)
+
+    tuple_id = tuple(list_lessons_id)
+
+    return tuple_id
 
 # (12, datetime.date(2023, 9, 16), datetime.time(18, 0), datetime.time(18, 45), None, None)
 # (13, datetime.date(2023, 9, 16), datetime.time(21, 0), datetime.time(21, 45), None, None)
