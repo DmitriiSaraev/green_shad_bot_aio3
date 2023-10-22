@@ -97,7 +97,7 @@ def get_dict_lesson(cursor):
     return list_dicts_lesson
 
 
-def get_student_id_from_cursor(cursor):
+def get_student_id_from_cursor(cursor, lesson_id=None):
     # Принимает объект курсора со столбцами student, visit, payment, comment из таблицы lessons_history
     # Возвращает словарь этих столбцов
     list_student_id_from_lesson = []
@@ -116,7 +116,8 @@ def get_student_id_from_cursor(cursor):
             'party_id': party,
             'visit': visit,
             'payment': payment,
-            'comment': comment
+            'comment': comment,
+            'lesson_id': lesson_id
         }
 
         list_student_id_from_lesson.append(dict_student_id)
@@ -186,7 +187,7 @@ def get_list_student(cursor):
     return list_students
 
 
-def get_user_id(users: dict) -> tuple[Any, ...]:
+def get_user_id(users: list) -> tuple[Any, ...]:
     list_user_id = []
 
     for user in users:

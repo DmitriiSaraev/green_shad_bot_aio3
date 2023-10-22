@@ -45,8 +45,8 @@ from core.sql.worker_sql import (add_lesson,
                                  delete_from_schedule_and_history)
 
 
-
 schedule_router = Router()
+
 
 @schedule_router.message(Command('schedule'))
 async def cmd_schedule(message: types.Message):
@@ -227,7 +227,7 @@ async def show_students(callback: types.CallbackQuery,
     lesson_id = callback_data.id_lesson
     students_data_id = get_students_id_from_lesson(lesson_id)
 
-    if len(students_data_id) == 0:
+    if students_data_id == None or len(students_data_id) == 0:
         keyboard = get_inline_keyboard_add_student_to_lesson(lesson_id)
         await callback.message.answer(text='На данный урок ни кто не записан',
                                       reply_markup=keyboard)

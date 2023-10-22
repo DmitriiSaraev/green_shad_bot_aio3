@@ -7,6 +7,7 @@ from core.handlers.register_handlers import reg_router
 from core.handlers.schedule_handlers import schedule_router
 from core.handlers.basic import dp
 from core.settings import settings
+from core.utils.create_table import create_table
 
 
 async def start(dp):
@@ -17,6 +18,8 @@ async def start(dp):
     logging.basicConfig(level=logging.INFO)
 
     bot = Bot(token=settings.bots.bot_token, parse_mode='HTML')
+
+    create_table()
 
     try:
         await dp.start_polling(bot)

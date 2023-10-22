@@ -17,14 +17,14 @@ def connect():
     return connection
 
 
-### Блок работы с пользователем ###
+### Создание баз ###
 def create_table_users():
     connection = False
 
     try:
         connection = connect()
         with connection.cursor() as cursor:
-            cursor.execute(query_SQL.create_table)
+            cursor.execute(query_SQL.create_table_users_sql)
             print('[INFO] Table created successfully')
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
@@ -35,6 +35,94 @@ def create_table_users():
             print('[INFO] PostgreSQL connection closed')
 
 
+def create_table_schedule():
+    connection = False
+
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            cursor.execute(query_SQL.create_table_schedule_sql)
+            print('[INFO] Table created successfully')
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def create_table_party():
+    connection = False
+
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            cursor.execute(query_SQL.create_table_party_sql)
+            print('[INFO] Table created successfully')
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def create_table_student_in_group():
+    connection = False
+
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            cursor.execute(query_SQL.create_table_student_in_group_sql)
+            print('[INFO] Table created successfully')
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def create_table_lessons_history():
+    connection = False
+
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            cursor.execute(query_SQL.create_table_lessons_history_sql)
+            print('[INFO] Table created successfully')
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+def create_table_statuses():
+    connection = False
+
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            cursor.execute(query_SQL.create_table_statuses_sql)
+            print('[INFO] Table created successfully')
+    except Exception as ex:
+        print('[INFO] Error while working with PostgreSQL', ex)
+
+    finally:
+        if connection:
+            connection.close()
+            print('[INFO] PostgreSQL connection closed')
+
+
+
+
+### Блок работы с пользователем ###
 def add_user(first_name,
              middle_name,
              last_name,
@@ -359,7 +447,6 @@ def get_all_students():
             print('[INFO] PostgreSQL connection closed')
 
 
-
 def add_student_to_party_worker(create_date, party, student):
     # Добавить ученика в группу
 
@@ -465,7 +552,6 @@ def add_students_to_lesson_worker(lesson_id, student_ids, party_id):
             print('[INFO] PostgreSQL connection closed')
 
 
-
 def add_party_to_lesson_worker(lesson_id, party_id):
     # Записать группу на урок
 
@@ -520,9 +606,6 @@ def delete_student_from_lesson(action, student_id, lesson_id):
         if connection:
             connection.close()
             print('[INFO] PostgreSQL connection closed')
-
-
-
 
 
 def get_student_id_from_party(party_id):

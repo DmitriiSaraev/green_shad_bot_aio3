@@ -7,7 +7,8 @@ from core.keyboards.newsletter_inline_keyboard import (
     get_inline_keyboard_newsletter)
 from core.sql.worker_newsletter_sql import get_lessons_on_date, \
     get_students_id_from_lesson_tomorrow
-from core.sql.worker_sql import get_students_id_from_lesson, get_user_data
+from core.sql.worker_sql import get_students_id_from_lesson, get_user_data, \
+    get_lesson
 from core.utils.parser import get_lessons_id, get_user_id
 
 newsletter_router = Router()
@@ -24,7 +25,7 @@ async def get_buttons_for_working_with_students(callback: types.CallbackQuery):
 
 
 @newsletter_router.callback_query(F.data == 'send_reminder_tomorrow')
-async def get_buttons_for_working_with_students(callback: types.CallbackQuery,
+async def send_riminder_tomorrow(callback: types.CallbackQuery,
                                                 bot: Bot):
     # Нужно получить всех пользователей у которых завтра уроки и отправить
     # напоминание
@@ -38,13 +39,25 @@ async def get_buttons_for_working_with_students(callback: types.CallbackQuery,
     lessons_id = get_lessons_id(lessons)
 
     lessons_history = get_students_id_from_lesson_tomorrow(lessons_id)
-    student_id = get_user_id(lessons_history)
 
-    students = get_user_data(student_id)
+    for lesson in lessons_history:
+        if lesson['student_id'] != None:
+            lesson_id = lesson['lesson_id'][0]
+            lesson_now = get_lesson(lesson_id)
+            start_lesson = lesson_now[0]['start_lesson']
+            end_lesson = lesson_now[0]['end_lesson']
+            list_history = []
+            list_history.append(lesson)
+            student_id = get_user_id(list_history)
+            student = get_user_data(student_id)
 
-    for student in students:
-        await bot.send_message(student['chat_id'],
-                               'Напоминаю что у вас завтра состоится урок')
+
+            await bot.send_message(
+                student[0]['chat_id'],
+                f'Напоминаю что у вас завтра в {start_lesson} '
+                f'состоится урок, конец урока в {end_lesson}'
+            )
+
 
     # await bot.send_message()
 
