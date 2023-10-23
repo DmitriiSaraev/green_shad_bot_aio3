@@ -25,9 +25,9 @@ def create_table_users():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_users_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Таблица пользователей создана')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы users', ex)
 
     finally:
         if connection:
@@ -42,9 +42,9 @@ def create_table_schedule():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_schedule_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Table schedule created successfully')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы schedule', ex)
 
     finally:
         if connection:
@@ -59,9 +59,9 @@ def create_table_party():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_party_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Table party created successfully')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы party', ex)
 
     finally:
         if connection:
@@ -76,9 +76,9 @@ def create_table_student_in_group():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_student_in_group_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Table student_in_group created successfully')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы student_in_group', ex)
 
     finally:
         if connection:
@@ -93,9 +93,9 @@ def create_table_lessons_history():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_lessons_history_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Table lessons_history created successfully')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы lessons_history', ex)
 
     finally:
         if connection:
@@ -110,9 +110,9 @@ def create_table_statuses():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_statuses_sql)
-            print('[INFO] Table created successfully')
+            print('[INFO] Table statuses created successfully')
     except Exception as ex:
-        print('[INFO] Error while working with PostgreSQL', ex)
+        print('[INFO] Ошибка создания таблицы statuses', ex)
 
     finally:
         if connection:
