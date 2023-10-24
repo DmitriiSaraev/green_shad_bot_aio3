@@ -25,9 +25,9 @@ def create_table_users():
         connection = connect()
         with connection.cursor() as cursor:
             cursor.execute(query_SQL.create_table_users_sql)
-            print('[INFO] Таблица пользователей создана')
+            print('[INFO] Table users created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы users', ex)
+        print('[INFO] Error created users', ex)
 
     finally:
         if connection:
@@ -44,7 +44,7 @@ def create_table_schedule():
             cursor.execute(query_SQL.create_table_schedule_sql)
             print('[INFO] Table schedule created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы schedule', ex)
+        print('[INFO] Error created schedule', ex)
 
     finally:
         if connection:
@@ -61,7 +61,7 @@ def create_table_party():
             cursor.execute(query_SQL.create_table_party_sql)
             print('[INFO] Table party created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы party', ex)
+        print('[INFO] Error created party', ex)
 
     finally:
         if connection:
@@ -78,7 +78,7 @@ def create_table_student_in_group():
             cursor.execute(query_SQL.create_table_student_in_group_sql)
             print('[INFO] Table student_in_group created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы student_in_group', ex)
+        print('[INFO] Error created student_in_group', ex)
 
     finally:
         if connection:
@@ -95,7 +95,7 @@ def create_table_lessons_history():
             cursor.execute(query_SQL.create_table_lessons_history_sql)
             print('[INFO] Table lessons_history created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы lessons_history', ex)
+        print('[INFO] Error created lessons_history', ex)
 
     finally:
         if connection:
@@ -112,7 +112,7 @@ def create_table_statuses():
             cursor.execute(query_SQL.create_table_statuses_sql)
             print('[INFO] Table statuses created successfully')
     except Exception as ex:
-        print('[INFO] Ошибка создания таблицы statuses', ex)
+        print('[INFO] Error created statuses', ex)
 
     finally:
         if connection:
@@ -249,13 +249,13 @@ def delete_from_schedule_and_history(lesson_id):
             # Выполнение запроса
             cursor.execute(query_schedule, (lesson_id,))
 
-            print('[INFO] Урок удален из таблицы Расписание')
+            print('[INFO] Lessin succefull delete from schedule')
 
             query_history = query_SQL.delete_lesson_from_history
             # Выполнение запроса
             cursor.execute(query_history, (lesson_id,))
 
-            print('[INFO] Урок удален из таблицы История уроков')
+            print('[INFO] Lessin succefull delete from lessons_history')
 
 
     except Exception as ex:
@@ -511,7 +511,7 @@ def add_student_to_lesson_worker(lesson_id, student_id):
             values = (lesson_id, None, student_id)
             # Выполнение запроса
             cursor.execute(query, values)
-            print('[INFO] Ученик записан на урок')
+            print('[INFO] Student add on lesson')
 
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
@@ -541,7 +541,7 @@ def add_students_to_lesson_worker(lesson_id, student_ids, party_id):
             # Выполнение запроса с множественными значениями
             cursor.executemany(query, values)
 
-            print('[INFO] Ученик(и) записан(ы) на урок')
+            print('[INFO] Students add on lesson')
 
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
@@ -566,7 +566,7 @@ def add_party_to_lesson_worker(lesson_id, party_id):
             values = (lesson_id, party_id)
             # Выполнение запроса
             cursor.execute(query, values)
-            print('[INFO] Группа записана на урок')
+            print('[INFO] Party add on lesson')
 
     except Exception as ex:
         print('[INFO] Error while working with PostgreSQL', ex)
