@@ -27,7 +27,8 @@ async def stop_bot(bot: Bot):
 
 @dp.message(CommandStart())
 async def get_start(message: Message, bot: Bot):
-    if message.from_user.id == settings.bots.admin_id:
+    if (message.from_user.id == settings.bots.admin_id
+            or message.from_user.id == settings.bots.alyona_id):
         await message.answer('Вот что ты можешь выбрать',
                              reply_markup=get_inline_keyboard_for_admin())
     else:
