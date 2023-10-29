@@ -6,20 +6,12 @@ async def set_commands(bot: Bot):
     commands = [
         BotCommand(
             command='start',
-            description='Начало работы'
-        ),
-        BotCommand(
-            command='help',
-            description='Помощь'
+            description='Нажми меня'
         ),
         BotCommand(
             command='register',
             description='Зарегистрироваться'
         ),
-        BotCommand(
-            command='cancel',
-            description='Сбросить'
-        )
     ]
 
     await bot.set_my_commands(commands, BotCommandScopeDefault())
