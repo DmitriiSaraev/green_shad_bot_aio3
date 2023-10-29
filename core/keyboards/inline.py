@@ -40,10 +40,9 @@ def get_keyboard_lessons(lessons):
     builder = InlineKeyboardBuilder()
 
     for lesson in lessons:
-        builder.button(text=f"Дата: {pars_date(lesson['date'])}, \r\n"
-                            f"Начало урока: "
-                            f"{pars_time(lesson['start_lesson'])}\r\n"
-                            f"Конец урока: {pars_time(lesson['end_lesson'])}",
+        builder.button(text=f"{pars_date(lesson['date'])}, "
+                            f"{pars_time(lesson['start_lesson'])} - "
+                            f"{pars_time(lesson['end_lesson'])}",
                        callback_data=
                        OpenLessonCallback(id_lesson=lesson['id_lesson']))
 
